@@ -3,8 +3,8 @@
     public class Todo
     {
         public int Id { get; set; }
-        public string Label { get; set; } = string.Empty;
-        public bool IsDone { get; set; } = false;
+        public string Label { get; set; } = default!;
+        public bool IsDone { get; set; }
         public DateTime CreateDate { get; set; }
         public DateTime UpdateDate { get; set; }
 
