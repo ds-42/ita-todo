@@ -1,4 +1,5 @@
 ﻿using Common.Domain;
+using Common.Domain.Exceptions;
 
 namespace Common.Repositories;
 
@@ -36,7 +37,7 @@ public class UserRepository : IUserRepository
         var item = Find(id);
 
         if (item == null)
-            throw new Exception("Invalid user id");
+            throw new InvalidUserException();
 
         return item;
     }
@@ -51,7 +52,7 @@ public class UserRepository : IUserRepository
     {
         var item = new User()
         {
-            Id = (Items.Count==0? 0 : Items.Max(t => t.Id)) + 1,
+            Id = (Items.Max(t => t.Id as int?) ?? 0) + 1,
             Name = user.Name,
         };
 

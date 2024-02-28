@@ -1,4 +1,5 @@
-﻿using Common.Repositories;
+﻿using Common.Domain.Exceptions;
+using Common.Repositories;
 using Todos.Domain;
 using Todos.Repositiories;
 
@@ -27,14 +28,18 @@ public class TodoService : ITodoService
 
     public Todo Create(Todo todo) 
     {
-        _userRepositiry.Get(todo.OwnerId);
+        var user = _userRepositiry.Find(todo.OwnerId);
+        if (user == null)
+            throw new InvalidUserException();
 
         return _todoRepositiry.Append(todo);
     }
 
     public Todo? Update(Todo todo)
     {
-        _userRepositiry.Get(todo.OwnerId);
+        var user = _userRepositiry.Find(todo.OwnerId);
+        if (user == null)
+            throw new InvalidUserException();
 
         return _todoRepositiry.Update(todo);
     }
