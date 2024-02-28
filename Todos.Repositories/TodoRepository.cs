@@ -52,7 +52,7 @@ public class TodoRepository : ITodoRepository
     {
         var item = new Todo()
         {
-            Id = Items.Max(t => t.Id) + 1,
+            Id = (Items.Max(t => t.Id as int?) ?? 0) + 1,
             OwnerId = todo.OwnerId,
             IsDone = todo.IsDone,
             Label = todo.Label,
