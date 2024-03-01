@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Todos.Domain;
 using Todos.Services;
+using Todos.Services.Dto;
 
 namespace Todos.Api.Controllers;
 
@@ -60,7 +61,7 @@ public class TodoController : ControllerBase
 
 
     [HttpPost]
-    public IActionResult AddItem(Todo item)
+    public IActionResult AddItem(CreateTodoDto item)
     {
         var rec = _todoService.Create(item);
 
@@ -69,7 +70,7 @@ public class TodoController : ControllerBase
 
 
     [HttpPut("{id}")]
-    public IActionResult UpdateItem(int id, Todo item)
+    public IActionResult UpdateItem(int id, UpdateTodoDto item)
     {
         item.Id = id;
         var rec = _todoService.Update(item);
