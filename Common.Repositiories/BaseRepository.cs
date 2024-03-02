@@ -27,7 +27,7 @@ public class BaseRepository<T> : IRepository<T> where T : class, new()
 
         if (limit != null) 
         {
-            items = items.Take(limit.Value); // faq: Почему нельзя написать limit!
+            items = items.Take(limit.Value); 
         }
 
         return items.ToArray();
