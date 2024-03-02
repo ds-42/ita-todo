@@ -1,17 +1,20 @@
-﻿using Todos.Domain;
-using Todos.Repositiories;
+﻿using Common.Repositories;
+using Todos.Domain;
 
 namespace Todos.Api.Repositories;
 
-public class TodoMockRepository : TodoRepository
+public static class TodoMockRepository
 {
-    public static void LoadData()
+    public static void UploadTodoData(this IServiceCollection services)
     {
-        Todo AddItem(string label, int ownerId)
+        using var serviceProvider = services.BuildServiceProvider();
+        var todoRepository = serviceProvider.GetService<IRepository<Todo>>()!;
+
+        Todo AddItem(int id, string label, int ownerId)
         {
             var item = new Todo()
             {
-                Id = Items.Count + 1,
+                Id = id,
                 OwnerId = ownerId,
                 IsDone = false,
                 Label = label,
@@ -19,17 +22,16 @@ public class TodoMockRepository : TodoRepository
                 UpdateDate = DateTime.UtcNow,
             };
 
-            Items.Add(item);
+            todoRepository.Add(item);
 
             return item;
         }
 
 
-        AddItem("task-1", 1);
-        AddItem("task-2", 2);
-        AddItem("task-3", 2);
-        AddItem("task-4", 3);
-        AddItem("task-5", 1);
+        AddItem(1, "task-1", 1);
+        AddItem(2, "task-2", 2);
+        AddItem(3, "task-3", 2);
+        AddItem(4, "task-4", 3);
+        AddItem(5, "task-5", 1);
     }
-
 }

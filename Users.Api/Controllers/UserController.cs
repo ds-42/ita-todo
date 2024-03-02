@@ -27,7 +27,7 @@ public class UserController : ControllerBase
     [HttpGet("{id}")]
     public IActionResult GetUser(int id)
     {
-        var item = _userService.Get(id);
+        var item = _userService.GetById(id);
 
         if (item == null)
         {

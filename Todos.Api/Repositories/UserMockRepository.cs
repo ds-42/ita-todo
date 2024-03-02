@@ -1,29 +1,32 @@
 ﻿using Common.Domain;
 using Common.Repositories;
+using Todos.Domain;
 
-namespace Todos.Api.Repositories
+namespace Todos.Api.Repositories;
+
+public static class TodoUserRepository
 {
-    public class UserMockRepository : UserRepository
+    public static void UploadUserData(this IServiceCollection services)
     {
-        public static void LoadData()
+        using var serviceProvider = services.BuildServiceProvider();
+        var userRepository = serviceProvider.GetService<IRepository<User>>()!;
+
+        User AddItem(int id, string name)
         {
-            User AddItem(string name)
+            var item = new User()
             {
-                var item = new User()
-                {
-                    Id = Items.Count + 1,
-                    Name = name,
-                };
+                Id = id,
+                Name = name,
+            };
 
-                Items.Add(item);
+            userRepository.Add(item);
 
-                return item;
-            }
-
-
-            AddItem("user-1");
-            AddItem("user-2");
-            AddItem("user-3");
+            return item;
         }
+
+
+        AddItem(1, "user-1");
+        AddItem(2, "user-2");
+        AddItem(3, "user-3");
     }
 }

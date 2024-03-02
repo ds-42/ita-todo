@@ -5,35 +5,52 @@ namespace Users.Services;
 
 public class UserService : IUserService
 {
-    private readonly IUserRepository _userRepositiry;
+    private readonly IRepository<User> _userRepositiry;
 
-    public UserService(IUserRepository userRepositiry) 
+    public UserService(IRepository<User> userRepositiry) 
     {
         _userRepositiry = userRepositiry;
     }
 
     public IReadOnlyCollection<User> GetItems(int offset = 0, int limit = 10, string nameText = "") 
     {
-        return _userRepositiry.GetItems(offset, limit, nameText);
+        return _userRepositiry.GetItems(
+            offset, 
+            limit, 
+            string.IsNullOrWhiteSpace(nameText)
+                ? null 
+                : t => t.Name.Contains(nameText, StringComparison.InvariantCultureIgnoreCase), 
+            t => t.Id);
     }
 
-    public User? Get(int id)
+    public User? GetById(int id)
     {
-        return _userRepositiry.Find(id);
+        return _userRepositiry.SingleOrDefault(t => t.Id == id);
     }
 
     public User Create(User user) 
     {
-        return _userRepositiry.Append(user);
+        user.Id = (_userRepositiry.GetItems().Max(t => t.Id as int?) ?? 0) + 1;
+        return _userRepositiry.Add(user);
     }
 
     public User? Update(User user)
     {
+        var item = GetById(user.Id);
+
+        if (item == null) 
+            return null;
+
         return _userRepositiry.Update(user);
     }
 
     public User? Delete(int id)
     {
-        return _userRepositiry.DeleteById(id);
+        var item = GetById(id);
+
+        if (item == null || _userRepositiry.Delete(item) == false)
+            return null;
+
+        return item;
     }
 }

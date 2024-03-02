@@ -21,6 +21,10 @@ public class TodoController : ControllerBase
     public IActionResult Get(int offset = 0, int limit = 10, string label_text = "", int owner_id = 0)
     {
         var items = _todoService.GetItems(offset, limit, label_text, owner_id);
+        int count = _todoService.Count(label_text);
+        HttpContext.Response.Headers
+            .Append("X-Total-Count", count.ToString());
+
         return Ok(items);
     }
 
@@ -28,7 +32,7 @@ public class TodoController : ControllerBase
     [HttpGet("{id}")]
     public IActionResult Get(int id)
     {
-        var item = _todoService.Get(id);
+        var item = _todoService.GetById(id);
 
         if (item == null)
         {
@@ -51,7 +55,7 @@ public class TodoController : ControllerBase
     [HttpGet("{id}/IsDone")]
     public IActionResult GetIsDone(int id)
     {
-        var item = _todoService.Get(id);
+        var item = _todoService.GetById(id);
 
         if (item == null)
             return NotFound();

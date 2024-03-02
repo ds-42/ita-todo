@@ -13,7 +13,6 @@
   <ItemGroup>
     <ProjectReference Include="..\Common.Repositiories\Common.Repositiories.csproj" />
     <ProjectReference Include="..\Todos.Domain\Todos.Domain.csproj" />
-    <ProjectReference Include="..\Todos.Repositories\Todos.Repositories.csproj" />
   </ItemGroup>
 
 </Project>
