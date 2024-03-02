@@ -2,6 +2,8 @@
 using Common.Domain;
 using Common.Domain.Exceptions;
 using Common.Repositories;
+using System.Linq.Expressions;
+using System.Reflection;
 using Todos.Domain;
 using Todos.Services.Dto;
 
@@ -25,15 +27,37 @@ public class TodoService : ITodoService
 
     public IReadOnlyCollection<Todo> GetItems(int offset = 0, int limit = 10, string labelText = "", int ownerId = 0) 
     {
+        var param = Expression.Parameter(typeof(Todo), nameof(Todo));
+        Expression? body = null;
+
+        if (ownerId > 0)
+        { 
+            var member = Expression.Property(param, nameof(Todo.OwnerId));
+            var constant = Expression.Constant(ownerId);
+            var expression = Expression.Equal(member, constant);
+            body = body == null
+                ? expression
+                : Expression.AndAlso(body, expression);
+        }
+
+        if (!string.IsNullOrWhiteSpace(labelText))
+        {
+            var member = Expression.Property(param, nameof(Todo.Label));
+            MethodInfo method = typeof(string).GetMethod("Contains", new[] { typeof(string)});
+            var expression = Expression.Constant(labelText, typeof(string));
+            var containsMethodExpr = Expression.Call(member, method, expression);
+            body = body == null
+                ? expression
+                : Expression.AndAlso(body, containsMethodExpr);
+        }
+
+        body ??= Expression.Constant(true);
+
         return _todoRepository.GetItems(
             offset, 
             limit, 
-            string.IsNullOrWhiteSpace(labelText)
-                ? null
-                : t => t.OwnerId==ownerId && t.Label.Contains(labelText, StringComparison.InvariantCultureIgnoreCase), 
+            Expression.Lambda<Func<Todo, bool>>(body, param), 
             t => t.Id);
-
-        // faq: Как добавить строгую проверку на OwnerId
     }
 
     public int Count(string labelText = "")
