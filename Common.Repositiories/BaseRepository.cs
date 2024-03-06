@@ -5,7 +5,6 @@ namespace Common.Repositories;
 public class BaseRepository<T> : IRepository<T> where T : class, new()
 {
     private static List<T> _items = [];
-    // faq: скорее всего объект должен быть статическим
 
     public T[] GetItems(int? offset = null, int? limit = null, Expression<Func<T, bool>>? predicate = null, Expression<Func<T, object>>? orderBy = null, bool? destinct = null)
     {

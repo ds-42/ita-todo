@@ -2,10 +2,15 @@
 using Common.Domain;
 using Common.Domain.Exceptions;
 using Common.Repositories;
+using FluentValidation;
+using Serilog;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Reflection.Metadata.Ecma335;
+using System.Text.Json;
 using Todos.Domain;
 using Todos.Services.Dto;
+using Todos.Services.Validators;
 
 namespace Todos.Services;
 
@@ -17,7 +22,7 @@ public class TodoService : ITodoService
 
     public TodoService(
         IRepository<Todo> todoRepository, 
-        IRepository<User> userRepository, 
+        IRepository<User> userRepository,
         IMapper mapper) 
     {
         _todoRepository = todoRepository;
@@ -77,7 +82,7 @@ public class TodoService : ITodoService
     {
         var user = _userRepository
             .SingleOrDefault(t => t.Id == todo.OwnerId);
-
+        
         if (user == null)
             throw new InvalidUserException();
 
@@ -87,7 +92,11 @@ public class TodoService : ITodoService
         item.CreateDate = DateTime.UtcNow;
         item.UpdateDate = DateTime.UtcNow;
 
-        return _todoRepository.Add(item);
+        item = _todoRepository.Add(item);
+
+        Log.Information($"Добавлена новая запись: {JsonSerializer.Serialize(item)}");
+
+        return item;
     }
 
     public Todo? Update(UpdateTodoDto todo)
@@ -101,8 +110,11 @@ public class TodoService : ITodoService
         var item = _mapper.Map<UpdateTodoDto, Todo>(todo);
         item.UpdateDate = DateTime.UtcNow;
 
-        return _todoRepository.Update(item);
-        // faq: Update не сработает так как у нас разные объекты
+        item = _todoRepository.Update(item);
+
+        Log.Information($"Запись изменена: {JsonSerializer.Serialize(item)}");
+
+        return item;
     }
 
     public Todo? Delete(int id)
@@ -111,6 +123,7 @@ public class TodoService : ITodoService
         if (item == null || _todoRepository.Delete(item) == false)
             return null;
 
+        Log.Information($"Запись удалена: {JsonSerializer.Serialize(item)}");
         return item;
     }
 
@@ -121,7 +134,12 @@ public class TodoService : ITodoService
         if (item != null)
         {
             item.IsDone = true;
-            return _todoRepository.Update(item);
+            item = _todoRepository.Update(item);
+
+            if(item != null)
+                Log.Information($"Признак выполнения изменен: {JsonSerializer.Serialize(item)}");
+
+            return item;
         }
 
         return item;
