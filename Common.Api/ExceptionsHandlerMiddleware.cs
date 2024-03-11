@@ -34,6 +34,8 @@ public class ExceptionsHandlerMiddleware
                     await httpContext.Response.WriteAsync(e.Message);
                     break;
             }
+
+//            if(!string.IsNullOrEmpty())
         }
     }
 }
