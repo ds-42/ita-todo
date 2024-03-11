@@ -20,6 +20,6 @@ public interface IRepository<T> where T : class, new()
 
     T? SingleOrDefault(Expression<Func<T, bool>>? predicate);
     T Add(T item);
-    T? Update(T item);
+    T Update(T item);
     bool Delete(T item);
 }

@@ -1,3 +1,5 @@
+using Common.Api;
+using Common.Repositiories;
 using Serilog;
 using Serilog.Events;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
@@ -30,7 +32,11 @@ try
 
     builder.Host.UseSerilog();
 
+    builder.Services.AddTodoDatabase(builder.Configuration);
+
     var app = builder.Build();
+
+    app.UseExceptionsHandler();
 
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
@@ -39,8 +45,8 @@ try
         app.UseSwaggerUI();
 
 
-        builder.Services.UploadTodoData();
         builder.Services.UploadUserData();
+        builder.Services.UploadTodoData();
     }
 
     app.UseHttpsRedirection();

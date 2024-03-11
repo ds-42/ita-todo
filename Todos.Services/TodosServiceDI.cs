@@ -1,12 +1,11 @@
 ﻿using Common.Domain;
+using Common.Repositiories;
 using Common.Repositories;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
 using Todos.Domain;
-using Todos.Services.Dto;
 using Todos.Services.Mapping;
-using Todos.Services.Validators;
 
 namespace Todos.Services
 {
@@ -14,8 +13,8 @@ namespace Todos.Services
     {
         public static IServiceCollection AddTodoServices(this IServiceCollection services) 
         {
-            services.AddTransient<IRepository<Todo>, BaseRepository<Todo>>();
-            services.AddTransient<IRepository<User>, BaseRepository<User>>();
+            services.AddTransient<IRepository<Todo>, SqlServerBaseRepository<Todo>>();
+            services.AddTransient<IRepository<User>, SqlServerBaseRepository<User>>();
 
             services.AddTransient<ITodoService, TodoService>();
 

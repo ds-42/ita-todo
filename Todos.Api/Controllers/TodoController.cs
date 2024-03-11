@@ -34,11 +34,6 @@ public class TodoController : ControllerBase
     {
         var item = _todoService.GetById(id);
 
-        if (item == null)
-        {
-            return NotFound($"/{id}");
-        }
-
         return Ok(item);
     }
 
@@ -56,9 +51,6 @@ public class TodoController : ControllerBase
     public IActionResult GetIsDone(int id)
     {
         var item = _todoService.GetById(id);
-
-        if (item == null)
-            return NotFound();
 
         return GetIsDoneState(item);
     }
@@ -79,9 +71,6 @@ public class TodoController : ControllerBase
         item.Id = id;
         var rec = _todoService.Update(item);
 
-        if (rec == null)
-            return NotFound($"{id}");
-
         return Ok(rec);
     }
 
@@ -91,9 +80,6 @@ public class TodoController : ControllerBase
     {
         var item = _todoService.Done(id);
 
-        if (item == null)
-            return NotFound();
-
         return GetIsDoneState(item);
     }
 
@@ -101,10 +87,7 @@ public class TodoController : ControllerBase
     [HttpDelete]
     public IActionResult DeleteItem([FromBody] int id)
     {
-        var item = _todoService.Delete(id);
-
-        if (item == null)
-            return NotFound($"{id}");
+        _todoService.Delete(id);
 
         return Ok();
     }

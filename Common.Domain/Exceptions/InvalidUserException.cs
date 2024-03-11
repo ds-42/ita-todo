@@ -1,13 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Common.Api.Exceptions;
+using Common.Domain;
+using Common.Domain.Exceptions;
 
 namespace Common.Domain.Exceptions
 {
-    public class InvalidUserException : System.Exception
+    public class InvalidUserException : NotFoundException
     {
-        public InvalidUserException() : base("Invalid user") { }
+        public InvalidUserException(int userId) : base(new 
+        { 
+            Id = userId,
+            Message = "Invalid user Id",
+        }) { }
     }
+}
+
+public abstract partial class Exceptions
+{
+    public static InvalidUserException InvalidUser(int userId)
+        => new InvalidUserException(userId);
 }

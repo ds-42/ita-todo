@@ -73,9 +73,14 @@ public class TodoService : ITodoService
     }
 
 
-    public Todo? GetById(int id)
+    public Todo GetById(int id)
     {
-        return _todoRepository.SingleOrDefault(t => t.Id == id);
+        var item = _todoRepository.SingleOrDefault(t => t.Id == id);
+
+        if(item == null)
+            throw Exceptions.InvalidUser(id);
+
+        return item;
     }
 
     public Todo Create(CreateTodoDto todo) 
@@ -84,7 +89,7 @@ public class TodoService : ITodoService
             .SingleOrDefault(t => t.Id == todo.OwnerId);
         
         if (user == null)
-            throw new InvalidUserException();
+            throw Exceptions.InvalidUser(todo.OwnerId);
 
         var item = _mapper.Map<CreateTodoDto, Todo>(todo);
 
@@ -99,15 +104,16 @@ public class TodoService : ITodoService
         return item;
     }
 
-    public Todo? Update(UpdateTodoDto todo)
+    public Todo Update(UpdateTodoDto todo)
     {
         var user = _userRepository
             .SingleOrDefault(t => t.Id == todo.OwnerId);
 
         if (user == null)
-            throw new InvalidUserException();
+            throw Exceptions.InvalidUser(todo.OwnerId);
 
-        var item = _mapper.Map<UpdateTodoDto, Todo>(todo);
+        var item = GetById(todo.Id);
+        _mapper.Map<UpdateTodoDto, Todo>(todo, item);
         item.UpdateDate = DateTime.UtcNow;
 
         item = _todoRepository.Update(item);
@@ -117,30 +123,23 @@ public class TodoService : ITodoService
         return item;
     }
 
-    public Todo? Delete(int id)
+    public Todo Delete(int id)
     {
         var item = GetById(id);
-        if (item == null || _todoRepository.Delete(item) == false)
-            return null;
+        _todoRepository.Delete(item);
 
         Log.Information($"Запись удалена: {JsonSerializer.Serialize(item)}");
         return item;
     }
 
-    public Todo? Done(int id)
+    public Todo Done(int id)
     {
         var item = GetById(id);
 
-        if (item != null)
-        {
-            item.IsDone = true;
-            item = _todoRepository.Update(item);
+        item.IsDone = true;
+        _todoRepository.Update(item);
 
-            if(item != null)
-                Log.Information($"Признак выполнения изменен: {JsonSerializer.Serialize(item)}");
-
-            return item;
-        }
+        Log.Information($"Признак выполнения изменен: {JsonSerializer.Serialize(item)}");
 
         return item;
     }

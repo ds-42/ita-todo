@@ -10,11 +10,10 @@ public static class TodoMockRepository
         using var serviceProvider = services.BuildServiceProvider();
         var todoRepository = serviceProvider.GetService<IRepository<Todo>>()!;
 
-        Todo AddItem(int id, string label, int ownerId)
+        Todo AddItem(string label, int ownerId)
         {
             var item = new Todo()
             {
-                Id = id,
                 OwnerId = ownerId,
                 IsDone = false,
                 Label = label,
@@ -27,11 +26,13 @@ public static class TodoMockRepository
             return item;
         }
 
+        if (todoRepository.Count() > 0)
+            return;
 
-        AddItem(1, "task-1", 1);
-        AddItem(2, "task-2", 2);
-        AddItem(3, "task-3", 2);
-        AddItem(4, "task-4", 3);
-        AddItem(5, "task-5", 1);
+        AddItem("task-1", 1);
+        AddItem("task-2", 2);
+        AddItem("task-3", 2);
+        AddItem("task-4", 3);
+        AddItem("task-5", 1);
     }
 }

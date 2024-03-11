@@ -11,11 +11,10 @@ public static class TodoUserRepository
         using var serviceProvider = services.BuildServiceProvider();
         var userRepository = serviceProvider.GetService<IRepository<User>>()!;
 
-        User AddItem(int id, string name)
+        User AddItem(string name)
         {
             var item = new User()
             {
-                Id = id,
                 Name = name,
             };
 
@@ -24,9 +23,11 @@ public static class TodoUserRepository
             return item;
         }
 
+        if (userRepository.Count() > 0)
+            return;
 
-        AddItem(1, "user-1");
-        AddItem(2, "user-2");
-        AddItem(3, "user-3");
+        AddItem("user-1");
+        AddItem("user-2");
+        AddItem("user-3");
     }
 }

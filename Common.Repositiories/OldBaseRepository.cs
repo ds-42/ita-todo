@@ -2,7 +2,7 @@
 
 namespace Common.Repositories;
 
-public class BaseRepository<T> : IRepository<T> where T : class, new()
+public class OldBaseRepository<T> : IRepository<T> where T : class, new()
 {
     private static List<T> _items = [];
 
