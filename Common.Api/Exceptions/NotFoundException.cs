@@ -8,14 +8,15 @@ public class NotFoundException : HttpException
     public NotFoundException(object filter) : base(JsonSerializer.Serialize(filter), HttpStatusCode.NotFound)
     {
     }
+
+    public static NotFoundException Create(object filter, string note = "Not found by filter")
+    { 
+       return new NotFoundException(new
+       {
+           Filter = filter,
+           Message = note
+       });
+    }
+
 }
 
-public abstract partial class Exceptions
-{
-    public static NotFoundException NotFound(object filter, string note = "Not found by filter")
-        => new NotFoundException(new 
-        {
-            Filter = filter,
-            Message = note
-        });
-}

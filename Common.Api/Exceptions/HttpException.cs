@@ -18,8 +18,6 @@ public class HttpException : Exception
         StatusCode = statusCode;
     }
 
-
-
     public virtual async Task WriteAsync(HttpContext httpContext)
     {
         httpContext.Response.StatusCode = (int)StatusCode;

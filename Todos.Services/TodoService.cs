@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Common.Api.Exceptions;
 using Common.Domain;
 using Common.Domain.Exceptions;
 using Common.Repositories;
@@ -48,7 +49,7 @@ public class TodoService : ITodoService
         if (!string.IsNullOrWhiteSpace(labelText))
         {
             var member = Expression.Property(param, nameof(Todo.Label));
-            MethodInfo method = typeof(string).GetMethod("Contains", new[] { typeof(string)});
+            MethodInfo method = typeof(string).GetMethod("Equals", new[] { typeof(string)});
             var expression = Expression.Constant(labelText, typeof(string));
             var containsMethodExpr = Expression.Call(member, method, expression);
             body = body == null
@@ -73,12 +74,13 @@ public class TodoService : ITodoService
     }
 
 
-    public Todo GetById(int id)
+    public async Task<Todo> GetByIdAsync(int id, CancellationToken cancellationToken = default)
     {
-        var item = _todoRepository.SingleOrDefault(t => t.Id == id);
+        var item = await _todoRepository
+            .SingleOrDefaultAsync(t => t.Id == id, cancellationToken);
 
-        if(item == null)
-            throw Exceptions.InvalidUser(id);
+        if (item == null)
+            throw new InvalidTodoException(id);
 
         return item;
     }
@@ -89,11 +91,10 @@ public class TodoService : ITodoService
             .SingleOrDefault(t => t.Id == todo.OwnerId);
         
         if (user == null)
-            throw Exceptions.InvalidUser(todo.OwnerId);
+            throw new InvalidUserException(todo.OwnerId);
 
         var item = _mapper.Map<CreateTodoDto, Todo>(todo);
 
-        item.Id = (_todoRepository.GetItems().Max(t => t.Id as int?) ?? 0) + 1;
         item.CreateDate = DateTime.UtcNow;
         item.UpdateDate = DateTime.UtcNow;
 
@@ -110,9 +111,9 @@ public class TodoService : ITodoService
             .SingleOrDefault(t => t.Id == todo.OwnerId);
 
         if (user == null)
-            throw Exceptions.InvalidUser(todo.OwnerId);
+            throw new InvalidUserException(todo.OwnerId);
 
-        var item = GetById(todo.Id);
+        var item = GetByIdAsync(todo.Id).Result;
         _mapper.Map<UpdateTodoDto, Todo>(todo, item);
         item.UpdateDate = DateTime.UtcNow;
 
@@ -125,7 +126,7 @@ public class TodoService : ITodoService
 
     public Todo Delete(int id)
     {
-        var item = GetById(id);
+        var item = GetByIdAsync(id).Result;
         _todoRepository.Delete(item);
 
         Log.Information($"Запись удалена: {JsonSerializer.Serialize(item)}");
@@ -134,7 +135,7 @@ public class TodoService : ITodoService
 
     public Todo Done(int id)
     {
-        var item = GetById(id);
+        var item = GetByIdAsync(id).Result;
 
         item.IsDone = true;
         _todoRepository.Update(item);

@@ -1,4 +1,5 @@
 ﻿using Common.Repositories;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -62,6 +63,16 @@ namespace Common.Repositiories
                 ? set.SingleOrDefault()
                 : set.SingleOrDefault(predicate);
         }
+
+        public async Task<T?> SingleOrDefaultAsync(Expression<Func<T, bool>>? predicate = null, CancellationToken cancellationToken = default)
+        {
+            var set = _dbContext.Set<T>();
+
+            return predicate == null
+                ? await set.SingleOrDefaultAsync(cancellationToken)
+                : await set.SingleOrDefaultAsync(predicate, cancellationToken);
+        }
+
 
         public T Add(T item)
         {

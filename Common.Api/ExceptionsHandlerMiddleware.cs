@@ -1,6 +1,7 @@
 ﻿using Common.Api.Exceptions;
 using Microsoft.AspNetCore.Http;
 using System.Net;
+using System.Text.Json;
 
 namespace Common.Api;
 
@@ -31,11 +32,14 @@ public class ExceptionsHandlerMiddleware
                     httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
                     httpContext.Response.ContentType = "application/json";
 
-                    await httpContext.Response.WriteAsync(e.Message);
+                    await httpContext.Response.WriteAsync(JsonSerializer.Serialize(new 
+                    {
+                        error = e.Message,
+                        innerMessage = e.InnerException?.Message,
+                        e.StackTrace,
+                    }));
                     break;
             }
-
-//            if(!string.IsNullOrEmpty())
         }
     }
 }

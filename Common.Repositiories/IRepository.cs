@@ -19,6 +19,8 @@ public interface IRepository<T> where T : class, new()
     int Count(Expression<Func<T, bool>>? predicate = null);
 
     T? SingleOrDefault(Expression<Func<T, bool>>? predicate);
+    Task<T?> SingleOrDefaultAsync(Expression<Func<T, bool>>? predicate = null, CancellationToken cancellationToken = default);
+
     T Add(T item);
     T Update(T item);
     bool Delete(T item);

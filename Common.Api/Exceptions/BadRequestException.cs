@@ -9,8 +9,3 @@ public class BadRequestException : HttpException
     }
 }
 
-public abstract partial class Exceptions
-{
-    public static BadRequestException BadRequest(string error)
-        => new BadRequestException(error);
-}

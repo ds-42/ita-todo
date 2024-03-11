@@ -30,9 +30,9 @@ public class TodoController : ControllerBase
 
 
     [HttpGet("{id}")]
-    public IActionResult Get(int id)
+    public async Task<IActionResult> Get(int id, CancellationToken cancellationToken)
     {
-        var item = _todoService.GetById(id);
+        var item = await _todoService.GetByIdAsync(id, cancellationToken);
 
         return Ok(item);
     }
@@ -48,9 +48,9 @@ public class TodoController : ControllerBase
 
 
     [HttpGet("{id}/IsDone")]
-    public IActionResult GetIsDone(int id)
+    public async Task<IActionResult> GetIsDone(int id)
     {
-        var item = _todoService.GetById(id);
+        var item = await _todoService.GetByIdAsync(id);
 
         return GetIsDoneState(item);
     }
