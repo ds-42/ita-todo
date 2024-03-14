@@ -31,7 +31,7 @@ public class TodoService : ITodoService
         _mapper = mapper;
     }
 
-    public IReadOnlyCollection<Todo> GetItems(int offset = 0, int limit = 10, string labelText = "", int ownerId = 0) 
+    public async Task<IReadOnlyCollection<Todo>> GetItemsAsync(int offset = 0, int limit = 10, string labelText = "", int ownerId = 0, CancellationToken cancellationToken = default) 
     {
         var param = Expression.Parameter(typeof(Todo), nameof(Todo));
         Expression? body = null;
@@ -59,18 +59,18 @@ public class TodoService : ITodoService
 
         body ??= Expression.Constant(true);
 
-        return _todoRepository.GetItems(
+        return await _todoRepository.GetItemsAsync(
             offset, 
             limit, 
             Expression.Lambda<Func<Todo, bool>>(body, param), 
-            t => t.Id);
+            t => t.Id, false, cancellationToken);
     }
 
-    public int Count(string labelText = "")
+    public async Task<int> CountAsync(string labelText = "", CancellationToken cancellationToken = default)
     {
         return string.IsNullOrWhiteSpace(labelText)
-            ? _todoRepository.Count()
-            : _todoRepository.Count(t => t.Label.Contains(labelText));
+            ? await _todoRepository.CountAsync(null, cancellationToken)
+            : await _todoRepository.CountAsync(t => t.Label.Contains(labelText), cancellationToken);
     }
 
 
@@ -85,10 +85,10 @@ public class TodoService : ITodoService
         return item;
     }
 
-    public Todo Create(CreateTodoDto todo) 
+    public async Task<Todo> CreateAsync(CreateTodoDto todo, CancellationToken cancellationToken = default) 
     {
-        var user = _userRepository
-            .SingleOrDefault(t => t.Id == todo.OwnerId);
+        var user = await _userRepository
+            .SingleOrDefaultAsync(t => t.Id == todo.OwnerId, cancellationToken);
         
         if (user == null)
             throw new InvalidUserException(todo.OwnerId);
@@ -98,47 +98,47 @@ public class TodoService : ITodoService
         item.CreateDate = DateTime.UtcNow;
         item.UpdateDate = DateTime.UtcNow;
 
-        item = _todoRepository.Add(item);
+        item = await _todoRepository.AddAsync(item, cancellationToken);
 
         Log.Information($"Добавлена новая запись: {JsonSerializer.Serialize(item)}");
 
         return item;
     }
 
-    public Todo Update(UpdateTodoDto todo)
+    public async Task<Todo> UpdateAsync(UpdateTodoDto todo, CancellationToken cancellationToken = default)
     {
-        var user = _userRepository
-            .SingleOrDefault(t => t.Id == todo.OwnerId);
+        var user = await _userRepository
+            .SingleOrDefaultAsync(t => t.Id == todo.OwnerId, cancellationToken);
 
         if (user == null)
             throw new InvalidUserException(todo.OwnerId);
 
-        var item = GetByIdAsync(todo.Id).Result;
+        var item = await GetByIdAsync(todo.Id, cancellationToken);
         _mapper.Map<UpdateTodoDto, Todo>(todo, item);
         item.UpdateDate = DateTime.UtcNow;
 
-        item = _todoRepository.Update(item);
+        item = await _todoRepository.UpdateAsync(item, cancellationToken);
 
         Log.Information($"Запись изменена: {JsonSerializer.Serialize(item)}");
 
         return item;
     }
 
-    public Todo Delete(int id)
+    public async Task<Todo> DeleteAsync(int id, CancellationToken cancellationToken = default)
     {
-        var item = GetByIdAsync(id).Result;
-        _todoRepository.Delete(item);
+        var item = await GetByIdAsync(id, cancellationToken);
+        await _todoRepository.DeleteAsync(item, cancellationToken);
 
         Log.Information($"Запись удалена: {JsonSerializer.Serialize(item)}");
         return item;
     }
 
-    public Todo Done(int id)
+    public async Task<Todo> DoneAsync(int id, CancellationToken cancellationToken = default)    
     {
-        var item = GetByIdAsync(id).Result;
+        var item = await GetByIdAsync(id, cancellationToken);
 
         item.IsDone = true;
-        _todoRepository.Update(item);
+        await _todoRepository.UpdateAsync(item, cancellationToken);
 
         Log.Information($"Признак выполнения изменен: {JsonSerializer.Serialize(item)}");
 

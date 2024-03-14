@@ -9,19 +9,19 @@ namespace Common.Repositories;
 
 public interface IRepository<T> where T : class, new()
 {
-    T[] GetItems(
+    Task<T[]> GetItemsAsync(
         int? offset = null, 
         int? limit = null, 
         Expression<Func<T, bool>>? predicate = null, 
         Expression<Func<T, object>>? orderBy = null,
-        bool? destinct = null);
+        bool? destinct = null,
+        CancellationToken cancellationToken = default);
 
-    int Count(Expression<Func<T, bool>>? predicate = null);
+    Task<int> CountAsync(Expression<Func<T, bool>>? predicate = null, CancellationToken cancellationToken = default);
 
-    T? SingleOrDefault(Expression<Func<T, bool>>? predicate);
     Task<T?> SingleOrDefaultAsync(Expression<Func<T, bool>>? predicate = null, CancellationToken cancellationToken = default);
 
-    T Add(T item);
-    T Update(T item);
-    bool Delete(T item);
+    Task<T> AddAsync(T item, CancellationToken cancellationToken = default);
+    Task<T> UpdateAsync(T item, CancellationToken cancellationToken = default);
+    Task<bool> DeleteAsync(T item, CancellationToken cancellationToken = default);
 }

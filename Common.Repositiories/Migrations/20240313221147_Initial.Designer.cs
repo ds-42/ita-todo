@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Common.Repositiories.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240311132836_Initial")]
+    [Migration("20240313221147_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -33,12 +33,15 @@ namespace Common.Repositiories.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Login")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Login")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });

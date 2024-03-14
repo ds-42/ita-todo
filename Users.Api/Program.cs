@@ -1,31 +1,54 @@
-using Common.Domain;
-using Common.Repositories;
+using Common.Api;
+using Serilog;
+using Serilog.Events;
+using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
+using System.Text.Json.Serialization;
 using Users.Services;
 
-var builder = WebApplication.CreateBuilder(args);
+Log.Logger = new LoggerConfiguration()
+    .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+    .WriteTo.File("Logs/information-.txt", LogEventLevel.Information, rollingInterval: RollingInterval.Day)
+    .WriteTo.File("Logs/errors-.txt", LogEventLevel.Error, rollingInterval: RollingInterval.Day)
+    .CreateLogger();
 
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddTransient<IRepository<User>, OldBaseRepository<User>>();
-builder.Services.AddTransient<IUserService, UserService>();
-builder.Services.AddSwaggerGen();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+try 
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    var builder = WebApplication.CreateBuilder(args);
+
+    // AddAsync services to the container.
+
+    builder.Services.AddControllers()
+        .AddJsonOptions(t => t.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
+
+    // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+    builder.Services.AddEndpointsApiExplorer();
+    builder.Services.AddSwaggerGen();
+
+    builder.Services.AddUserServices();
+    builder.Services.AddFluentValidationAutoValidation();
+
+    builder.Host.UseSerilog();
+
+    var app = builder.Build();
+
+    app.UseExceptionsHandler();
+
+    // Configure the HTTP request pipeline.
+    if (app.Environment.IsDevelopment())
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI();
+    }
+
+    app.UseHttpsRedirection();
+
+    app.UseAuthorization();
+
+    app.MapControllers();
+
+    app.Run();
 }
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
+catch (Exception e)
+{
+    Log.Fatal(e, "Run error");
+}

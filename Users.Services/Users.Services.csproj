@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Common.BL\Common.BL.csproj" />
     <ProjectReference Include="..\Common.Domain\Common.Domain.csproj" />
     <ProjectReference Include="..\Common.Repositiories\Common.Repositiories.csproj" />
   </ItemGroup>

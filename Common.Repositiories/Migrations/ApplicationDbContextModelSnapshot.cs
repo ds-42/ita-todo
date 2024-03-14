@@ -30,12 +30,15 @@ namespace Common.Repositiories.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Name")
+                    b.Property<string>("Login")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Login")
+                        .IsUnique();
 
                     b.ToTable("Users");
                 });

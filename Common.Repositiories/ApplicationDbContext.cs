@@ -24,7 +24,8 @@ public class ApplicationDbContext : DbContext
             .HasForeignKey(t => t.OwnerId);
 
         modelBuilder.Entity<User>().HasKey(t => t.Id);
-        modelBuilder.Entity<User>().Property(t => t.Name).HasMaxLength(50).IsRequired();
+        modelBuilder.Entity<User>().Property(t => t.Login).HasMaxLength(50).IsRequired();
+        modelBuilder.Entity<User>().HasIndex(t => t.Login).IsUnique();
 
 
         base.OnModelCreating(modelBuilder);

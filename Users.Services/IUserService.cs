@@ -1,12 +1,13 @@
 ﻿using Common.Domain;
+using Users.Services.Dto;
 
 namespace Users.Services;
 
 public interface IUserService
 {
-    IReadOnlyCollection<User> GetItems(int offset = 0, int limit = 10, string nameText = "");
-    User? GetById(int id);
-    User Create(User user);
-    User? Update(User user);
-    User? Delete(int id);
+    Task<IReadOnlyCollection<GetUserDto>> GetItemsAsync(int offset = 0, int limit = 10, string nameText = "", CancellationToken cancellationToken = default);
+    Task<GetUserDto?> GetByIdAsync(int id, CancellationToken cancellationToken = default);
+    Task<GetUserDto> CreateAsync(CreateUserDto user, CancellationToken cancellationToken = default);
+    Task<GetUserDto?> UpdateAsync(User user, CancellationToken cancellationToken = default);
+    Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default);
 }

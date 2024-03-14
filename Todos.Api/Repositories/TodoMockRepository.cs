@@ -5,12 +5,12 @@ namespace Todos.Api.Repositories;
 
 public static class TodoMockRepository
 {
-    public static void UploadTodoData(this IServiceCollection services)
+    public static async Task UploadTodoData(this IServiceCollection services)
     {
         using var serviceProvider = services.BuildServiceProvider();
         var todoRepository = serviceProvider.GetService<IRepository<Todo>>()!;
 
-        Todo AddItem(string label, int ownerId)
+        async Task<Todo> AddItem(string label, int ownerId)
         {
             var item = new Todo()
             {
@@ -21,18 +21,18 @@ public static class TodoMockRepository
                 UpdateDate = DateTime.UtcNow,
             };
 
-            todoRepository.Add(item);
+            await todoRepository.AddAsync(item);
 
             return item;
         }
 
-        if (todoRepository.Count() > 0)
+        if (await todoRepository.CountAsync() > 0)
             return;
 
-        AddItem("task-1", 1);
-        AddItem("task-2", 2);
-        AddItem("task-3", 2);
-        AddItem("task-4", 3);
-        AddItem("task-5", 1);
+        await AddItem("task-1", 1);
+        await AddItem("task-2", 2);
+        await AddItem("task-3", 2);
+        await AddItem("task-4", 3);
+        await AddItem("task-5", 1);
     }
 }

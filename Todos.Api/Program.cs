@@ -18,7 +18,7 @@ try
 
     var builder = WebApplication.CreateBuilder(args);
 
-    // Add services to the container.
+    // AddAsync services to the container.
 
     builder.Services.AddControllers()
         .AddJsonOptions(t => t.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
@@ -48,8 +48,8 @@ try
         app.UseSwaggerUI();
 
 
-        builder.Services.UploadUserData();
-        builder.Services.UploadTodoData();
+        //await builder.Services.UploadUserData();
+        //await builder.Services.UploadTodoData();
     }
 
     app.UseHttpsRedirection();
@@ -64,5 +64,5 @@ try
 }
 catch (Exception e)
 {
-    Log.Error(e, "Run error");
+    Log.Fatal(e, "Run error");
 }

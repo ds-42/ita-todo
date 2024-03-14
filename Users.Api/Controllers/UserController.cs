@@ -27,7 +27,7 @@ public class UserController : ControllerBase
     [HttpGet("{id}")]
     public IActionResult GetUser(int id)
     {
-        var item = _userService.GetById(id);
+        var item = _userService.GetByIdAsync(id);
 
         if (item == null)
         {
@@ -52,7 +52,7 @@ public class UserController : ControllerBase
     public IActionResult UpdateUser(int id, User user)
     {
         user.Id = id;
-        var item = _userService.Update(user);
+        var item = _userService.UpdateAsync(user);
 
         if (item == null)
             return NotFound($"{id}");
@@ -64,7 +64,7 @@ public class UserController : ControllerBase
     [HttpDelete]
     public IActionResult DeleteUser([FromBody] int id)
     {
-        var item = _userService.Delete(id);
+        var item = _userService.DeleteAsync(id);
 
         if (item == null)
             return NotFound($"{id}");

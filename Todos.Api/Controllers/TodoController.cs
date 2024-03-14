@@ -18,10 +18,10 @@ public class TodoController : ControllerBase
 
 
     [HttpGet]
-    public IActionResult Get(int offset = 0, int limit = 10, string label_text = "", int owner_id = 0)
+    public async Task<IActionResult> Get(int offset = 0, int limit = 10, string label_text = "", int owner_id = 0, CancellationToken cancellationToken = default)
     {
-        var items = _todoService.GetItems(offset, limit, label_text, owner_id);
-        int count = _todoService.Count(label_text);
+        var items = await _todoService.GetItemsAsync(offset, limit, label_text, owner_id, cancellationToken);
+        int count = await _todoService.CountAsync(label_text, cancellationToken);
         HttpContext.Response.Headers
             .Append("X-Total-Count", count.ToString());
 
@@ -48,46 +48,46 @@ public class TodoController : ControllerBase
 
 
     [HttpGet("{id}/IsDone")]
-    public async Task<IActionResult> GetIsDone(int id)
+    public async Task<IActionResult> GetIsDone(int id, CancellationToken cancellationToken)
     {
-        var item = await _todoService.GetByIdAsync(id);
+        var item = await _todoService.GetByIdAsync(id, cancellationToken);
 
         return GetIsDoneState(item);
     }
 
 
     [HttpPost]
-    public IActionResult AddItem(CreateTodoDto item)
+    public async Task<IActionResult> AddItem(CreateTodoDto item, CancellationToken cancellationToken)
     {
-        var rec = _todoService.Create(item);
+        var rec = await _todoService.CreateAsync(item, cancellationToken);
 
         return Created($"todos/{rec.Id}", rec);
     }
 
 
     [HttpPut("{id}")]
-    public IActionResult UpdateItem(int id, UpdateTodoDto item)
+    public async Task<IActionResult> UpdateItem(int id, UpdateTodoDto item, CancellationToken cancellationToken)
     {
         item.Id = id;
-        var rec = _todoService.Update(item);
+        var rec = await _todoService.UpdateAsync(item,cancellationToken);
 
         return Ok(rec);
     }
 
 
     [HttpPatch("{id}/IsDone")]
-    public IActionResult DoneItem(int id)
+    public async Task<IActionResult> DoneItem(int id, CancellationToken cancellationToken)
     {
-        var item = _todoService.Done(id);
+        var item = await _todoService.DoneAsync(id, cancellationToken);
 
         return GetIsDoneState(item);
     }
 
 
     [HttpDelete]
-    public IActionResult DeleteItem([FromBody] int id)
+    public async Task<IActionResult> DeleteItem([FromBody] int id, CancellationToken cancellationToken)
     {
-        _todoService.Delete(id);
+        await _todoService.DeleteAsync(id, cancellationToken);
 
         return Ok();
     }

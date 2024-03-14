@@ -18,7 +18,13 @@ namespace Common.Repositiories
             _dbContext = dbContext;
         }
 
-        public T[] GetItems(int? offset = null, int? limit = null, Expression<Func<T, bool>>? predicate = null, Expression<Func<T, object>>? orderBy = null, bool? destinct = null)
+        public async Task<T[]> GetItemsAsync(
+            int? offset = null, 
+            int? limit = null, 
+            Expression<Func<T, bool>>? predicate = null, 
+            Expression<Func<T, object>>? orderBy = null, 
+            bool? destinct = null, 
+            CancellationToken cancellationToken = default)
         {
             var items = _dbContext.Set<T>().AsQueryable();
 
@@ -44,27 +50,18 @@ namespace Common.Repositiories
                 items = items.Take(limit.Value);
             }
 
-            return items.ToArray();
+            return await items.ToArrayAsync(cancellationToken);
         }
 
-        public int Count(Expression<Func<T, bool>>? predicate = null)
+        public async Task<int> CountAsync(Expression<Func<T, bool>>? predicate = null, CancellationToken cancellationToken = default)
         {
             var set = _dbContext.Set<T>();
             return predicate == null
-                ? set.Count() 
-                : set.Count(predicate);
+                ? await set.CountAsync(cancellationToken) 
+                : await set.CountAsync(predicate, cancellationToken);
         }
 
-        public T? SingleOrDefault(Expression<Func<T, bool>>? predicate)
-        {
-            var set = _dbContext.Set<T>();
-
-            return predicate == null
-                ? set.SingleOrDefault()
-                : set.SingleOrDefault(predicate);
-        }
-
-        public async Task<T?> SingleOrDefaultAsync(Expression<Func<T, bool>>? predicate = null, CancellationToken cancellationToken = default)
+        public async Task<T?> SingleOrDefaultAsync(Expression<Func<T, bool>>? predicate, CancellationToken cancellationToken = default)
         {
             var set = _dbContext.Set<T>();
 
@@ -74,27 +71,27 @@ namespace Common.Repositiories
         }
 
 
-        public T Add(T item)
+        public async Task<T> AddAsync(T item, CancellationToken cancellationToken = default)
         {
             var set = _dbContext.Set<T>();
-            set.Add(item);
-            _dbContext.SaveChanges();
+            await set.AddAsync(item, cancellationToken);
+            await _dbContext.SaveChangesAsync();
             return item;
         }
 
-        public T Update(T item)
+        public async Task<T> UpdateAsync(T item, CancellationToken cancellationToken = default)
         {
             var set = _dbContext.Set<T>();
-            set.Update(item);
-            _dbContext.SaveChanges();
+            set.Update(item); // faq: почему нет асинхронного метода
+            await _dbContext.SaveChangesAsync(cancellationToken);
             return item;
         }
 
-        public bool Delete(T item)
+        public async Task<bool> DeleteAsync(T item, CancellationToken cancellationToken = default)
         {
             var set = _dbContext.Set<T>();
             set.Remove(item);
-            return _dbContext.SaveChanges() > 0;
+            return await _dbContext.SaveChangesAsync() > 0;
         }
     }
 }
