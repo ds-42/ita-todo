@@ -1,9 +1,8 @@
 ﻿using Users.Services.Dto;
 
-namespace Users.Services
+namespace Users.Services;
+
+public interface IAuthService
 {
-    internal interface IAuthService
-    {
-        public Task<string> GetJwtToken(AuthDto userDto);
-    }
+    public Task<string> GetJwtToken(AuthDto userDto, CancellationToken cancellationToken);
 }

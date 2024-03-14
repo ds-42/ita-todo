@@ -1,9 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using Common.Domain;
 using Users.Services;
+using Users.Services.Dto;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace Users.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("users")]
 public class UserController : ControllerBase
@@ -16,59 +20,67 @@ public class UserController : ControllerBase
     }
 
 
-    [HttpGet]
-    public IActionResult Get(int offset = 0, int limit = 10, string nameText = "")
+    [AllowAnonymous]
+    [HttpPost]
+    public async Task<IActionResult> CreateUser(CreateUserDto user, CancellationToken cancellationToken = default)
     {
-        var items = _userService.GetItems(offset, limit, nameText);
-        return Ok(items);
+        var item = await _userService.CreateAsync(user, cancellationToken);
+
+        return Created($"users/{item.Id}", item);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetMyInfo(CancellationToken cancellationToken) 
+    {
+        var curentUserId = User.FindFirst(ClaimTypes.NameIdentifier);
+        var user = await _userService.GetByIdOrDefaultAsync(int.Parse(curentUserId.Value), cancellationToken);
+        return Ok(user);
     }
 
 
-    [HttpGet("{id}")]
-    public IActionResult GetUser(int id)
-    {
-        var item = _userService.GetByIdAsync(id);
-
-        if (item == null)
+    /*
+        [HttpGet]
+        public async Task<IActionResult> Get(int offset = 0, int limit = 10, string nameText = "", CancellationToken cancellationToken = default)
         {
-            return NotFound($"/{id}");
+            var items = await _userService.GetItemsAsync(offset, limit, nameText, cancellationToken);
+            return Ok(items);
         }
 
-        return Ok(item);
-    }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetUser(int id, CancellationToken cancellationToken = default)
+        {
+            var item = await _userService.GetByIdOrDefaultAsync(id, cancellationToken);
+
+            if (item == null)
+            {
+                return NotFound($"/{id}");
+            }
+
+            return Ok(item);
+        }
 
 
 
-    [HttpPost]
-    public IActionResult AddUser(User user)
-    {
-        var item = _userService.Create(user);
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateUser(int id, User user, CancellationToken cancellationToken = default)
+        {
+            user.Id = id;
+            var item = await _authService.UpdateAsync(user, cancellationToken);
 
-        return Created($"/{item.Id}", item);
-    }
+            if (item == null)
+                return NotFound($"{id}");
 
-
-    [HttpPut("{id}")]
-    public IActionResult UpdateUser(int id, User user)
-    {
-        user.Id = id;
-        var item = _userService.UpdateAsync(user);
-
-        if (item == null)
-            return NotFound($"{id}");
-
-        return Ok(item);
-    }
+            return Ok(item);
+        }
 
 
-    [HttpDelete]
-    public IActionResult DeleteUser([FromBody] int id)
-    {
-        var item = _userService.DeleteAsync(id);
+        [HttpDelete]
+        public async Task<IActionResult> DeleteUser([FromBody] int id, CancellationToken cancellationToken = default)
+        {
+            if(await _authService.DeleteAsync(id, cancellationToken) == false)
+                return NotFound($"{id}");
 
-        if (item == null)
-            return NotFound($"{id}");
-
-        return Ok();
-    }
+            return Ok();
+        }*/
 }

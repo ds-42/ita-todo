@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common.Api\Common.Api.csproj" />
+    <ProjectReference Include="..\Common.BL\Common.BL.csproj" />
   </ItemGroup>
 
 </Project>

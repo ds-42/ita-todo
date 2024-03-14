@@ -1,4 +1,4 @@
-﻿using Common.Api.Exceptions;
+﻿using Common.BL.Exceptions;
 
 namespace Common.Domain.Exceptions;
 

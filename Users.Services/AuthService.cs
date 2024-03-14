@@ -1,4 +1,4 @@
-﻿using Common.Api.Exceptions;
+﻿using Common.BL.Exceptions;
 using Common.Domain;
 using Common.Repositories;
 using Microsoft.Extensions.Configuration;
@@ -23,9 +23,9 @@ public class AuthService : IAuthService
         _config = config;
     }
 
-    public async Task<string> GetJwtToken(AuthDto userDto)
+    public async Task<string> GetJwtToken(AuthDto userDto, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.SingleOrDefaultAsync(t => t.Login == userDto.Login.Trim());
+        var user = await _userRepository.SingleOrDefaultAsync(t => t.Login == userDto.Login.Trim(), cancellationToken);
         if (user == null)
         {
             throw new BadRequestException("Invalid login or password");

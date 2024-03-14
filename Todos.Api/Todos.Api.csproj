@@ -25,4 +25,8 @@
     <ProjectReference Include="..\Todos.Services\Todos.Services.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Logs\" />
+  </ItemGroup>
+
 </Project>

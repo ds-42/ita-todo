@@ -74,8 +74,8 @@ namespace Common.Repositiories
         public async Task<T> AddAsync(T item, CancellationToken cancellationToken = default)
         {
             var set = _dbContext.Set<T>();
-            await set.AddAsync(item, cancellationToken);
-            await _dbContext.SaveChangesAsync();
+            set.Add(item);
+            await _dbContext.SaveChangesAsync(cancellationToken);
             return item;
         }
 
@@ -91,7 +91,7 @@ namespace Common.Repositiories
         {
             var set = _dbContext.Set<T>();
             set.Remove(item);
-            return await _dbContext.SaveChangesAsync() > 0;
+            return await _dbContext.SaveChangesAsync(cancellationToken) > 0;
         }
     }
 }

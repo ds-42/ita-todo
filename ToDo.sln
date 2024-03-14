@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Todos.Api", "Todos.Api\Todo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.Api", "Common.Api\Common.Api.csproj", "{DD3B2DF2-4224-4400-8039-3CC7069DFCE4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Common.BL", "Common.BL\Common.BL.csproj", "{87FC3837-2FD3-4AC3-AE80-8B21903F5833}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Common.BL", "Common.BL\Common.BL.csproj", "{87FC3837-2FD3-4AC3-AE80-8B21903F5833}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

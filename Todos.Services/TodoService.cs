@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Common.Api.Exceptions;
 using Common.Domain;
 using Common.Domain.Exceptions;
 using Common.Repositories;

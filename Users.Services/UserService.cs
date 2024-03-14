@@ -1,8 +1,7 @@
 ﻿using AutoMapper;
-using Common.Api.Exceptions;
+using Common.BL.Exceptions;
 using Common.Domain;
 using Common.Repositories;
-using System.Collections.Generic;
 using Users.Services.Dto;
 using Users.Services.Utils;
 
@@ -30,7 +29,7 @@ public class UserService : IUserService
             t => t.Id, null, cancellationToken));
     }
 
-    public async Task<GetUserDto?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<GetUserDto?> GetByIdOrDefaultAsync(int id, CancellationToken cancellationToken = default)
     {
         return _mapper.Map<GetUserDto>(await _userRepository.SingleOrDefaultAsync(t => t.Id == id, cancellationToken));
     }
@@ -39,7 +38,7 @@ public class UserService : IUserService
     {
         var login = dto.Login.Trim();
 
-        if (await _userRepository.SingleOrDefaultAsync(t => t.Login == login) != null)
+        if (await _userRepository.SingleOrDefaultAsync(t => t.Login == login, cancellationToken) != null)
         {
             throw new BadRequestException("Invalid login or password");
         }
@@ -56,7 +55,7 @@ public class UserService : IUserService
 
     public async Task<GetUserDto?> UpdateAsync(User user, CancellationToken cancellationToken = default)
     {
-        var item = await GetByIdAsync(user.Id, cancellationToken);
+        var item = await GetByIdOrDefaultAsync(user.Id, cancellationToken);
 
         if (item == null) 
             return null;
