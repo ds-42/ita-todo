@@ -15,12 +15,14 @@ namespace Users.Services;
 public class AuthService : IAuthService
 {
     private readonly IRepository<User> _userRepository;
+    private readonly IRepository<UserRole> _roleRepository;
     private readonly IConfiguration _config;
 
-    public AuthService(IRepository<User> userRepository, IConfiguration config)
+    public AuthService(IRepository<User> userRepository, IRepository<UserRole> roleRepository, IConfiguration config)
     {
         _userRepository = userRepository;
         _config = config;
+        _roleRepository = roleRepository;
     }
 
     public async Task<string> GetJwtToken(AuthDto userDto, CancellationToken cancellationToken)
@@ -36,11 +38,13 @@ public class AuthService : IAuthService
             throw new FormatException();
         }
 
+        var role = await _roleRepository.SingleOrDefaultAsync(t => t.Id == user.RoleId, cancellationToken);
 
         var claims = new List<Claim>()
         {
             new (ClaimTypes.Name, user.Login),
             new (ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new (ClaimTypes.Role, role!.Name),
         };
 
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));

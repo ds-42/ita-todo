@@ -8,6 +8,7 @@ public class ApplicationDbContext : DbContext
 {
     public DbSet<Todo> Todos { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<UserRole> UserRoles { get; set; }
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> dbContextOptions) : base(dbContextOptions)
     {
@@ -27,6 +28,12 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<User>().Property(t => t.Login).HasMaxLength(50).IsRequired();
         modelBuilder.Entity<User>().HasIndex(t => t.Login).IsUnique();
 
+        modelBuilder.Entity<User>().HasOne(t => t.Role)
+            .WithMany(t => t.Users)
+            .HasForeignKey(t => t.RoleId);
+
+        modelBuilder.Entity<UserRole>().HasKey(t => t.Id);
+        modelBuilder.Entity<UserRole>().Property(t => t.Name).HasMaxLength(50).IsRequired();
 
         base.OnModelCreating(modelBuilder);
     }

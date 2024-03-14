@@ -28,6 +28,8 @@ try
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddTodoDatabase(builder.Configuration);
+    builder.Services.AddSwaggerGen();
+
     builder.Services.AddSwaggerGen(options => 
     {
         options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()

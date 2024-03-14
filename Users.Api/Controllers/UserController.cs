@@ -29,14 +29,6 @@ public class UserController : ControllerBase
         return Created($"users/{item.Id}", item);
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetMyInfo(CancellationToken cancellationToken) 
-    {
-        var curentUserId = User.FindFirst(ClaimTypes.NameIdentifier);
-        var user = await _userService.GetByIdOrDefaultAsync(int.Parse(curentUserId.Value), cancellationToken);
-        return Ok(user);
-    }
-
 
     /*
         [HttpGet]

@@ -47,6 +47,7 @@ public class UserService : IUserService
         {
             Login = login,
             Password = PasswordHashUtils.Hash(dto.Password),
+            RoleId = 1,
         };
 
         return _mapper.Map<GetUserDto>(await _userRepository.AddAsync(user, cancellationToken));
