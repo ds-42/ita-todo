@@ -17,12 +17,12 @@ namespace Todos.Services;
 public class TodoService : ITodoService
 {
     private readonly IRepository<Todo> _todoRepository;
-    private readonly IRepository<User> _userRepository;
+    private readonly IRepository<ApplicationUser> _userRepository;
     private readonly IMapper _mapper;
 
     public TodoService(
         IRepository<Todo> todoRepository, 
-        IRepository<User> userRepository,
+        IRepository<ApplicationUser> userRepository,
         IMapper mapper) 
     {
         _todoRepository = todoRepository;

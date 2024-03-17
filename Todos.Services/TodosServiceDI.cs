@@ -14,7 +14,7 @@ namespace Todos.Services
         public static IServiceCollection AddTodoServices(this IServiceCollection services) 
         {
             services.AddTransient<IRepository<Todo>, SqlServerBaseRepository<Todo>>();
-            services.AddTransient<IRepository<User>, SqlServerBaseRepository<User>>();
+            services.AddTransient<IRepository<ApplicationUser>, SqlServerBaseRepository<ApplicationUser>>();
 
             services.AddTransient<ITodoService, TodoService>();
 

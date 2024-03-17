@@ -9,11 +9,11 @@ public static class TodoUserRepository
     public static async Task UploadUserData(this IServiceCollection services)
     {
         using var serviceProvider = services.BuildServiceProvider();
-        var userRepository = serviceProvider.GetService<IRepository<User>>()!;
+        var userRepository = serviceProvider.GetService<IRepository<ApplicationUser>>()!;
 
-        async Task<User> AddItem(string name)
+        async Task<ApplicationUser> AddItem(string name)
         {
-            var item = new User()
+            var item = new ApplicationUser()
             {
                 Login = name,
             };

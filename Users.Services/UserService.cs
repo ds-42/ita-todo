@@ -9,12 +9,14 @@ namespace Users.Services;
 
 public class UserService : IUserService
 {
-    private readonly IRepository<User> _userRepository;
+    private readonly IRepository<ApplicationUser> _userRepository;
+    private readonly IRepository<ApplicationUserRole> _userRoles;
     private readonly IMapper _mapper;
 
-    public UserService(IRepository<User> userRepositiry, IMapper mapper) 
+    public UserService(IRepository<ApplicationUser> userRepositiry, IRepository<ApplicationUserRole> userRoles, IMapper mapper) 
     {
         _userRepository = userRepositiry;
+        _userRoles = userRoles;
         _mapper = mapper;
     }
 
@@ -43,18 +45,20 @@ public class UserService : IUserService
             throw new BadRequestException("Invalid login or password");
         }
 
-        var user = new User()
+        var userRoles = (await _userRoles.SingleOrDefaultAsync(t => t.Name == "Admin", cancellationToken))!;
+
+        var user = new ApplicationUser()
         {
             Login = login,
             Password = PasswordHashUtils.Hash(dto.Password),
-            RoleId = 1,
+            Roles = new[] { new ApplicationUserApplicationRole() { ApplicationUserRoleId = userRoles.Id} },
         };
 
         return _mapper.Map<GetUserDto>(await _userRepository.AddAsync(user, cancellationToken));
     }
 
 
-    public async Task<GetUserDto?> UpdateAsync(User user, CancellationToken cancellationToken = default)
+    public async Task<GetUserDto?> UpdateAsync(ApplicationUser user, CancellationToken cancellationToken = default)
     {
         var item = await GetByIdOrDefaultAsync(user.Id, cancellationToken);
 

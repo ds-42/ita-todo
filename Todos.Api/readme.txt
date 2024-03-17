@@ -1,5 +1,5 @@
-- создание миграции из озновного проекта
+п»ї- СЃРѕР·РґР°РЅРёРµ РјРёРіСЂР°С†РёРё РёР· РѕР·РЅРѕРІРЅРѕРіРѕ РїСЂРѕРµРєС‚Р°
 dotnet ef migrations add Initial --project "e:\Users\Aleks\C#\it_academia\ita-todo\Common.Repositiories\Common.Repositiories.csproj"
 
-- выполнение миграции из озновного проекта
+- РІС‹РїРѕР»РЅРµРЅРёРµ РјРёРіСЂР°С†РёРё РёР· РѕР·РЅРѕРІРЅРѕРіРѕ РїСЂРѕРµРєС‚Р°
 dotnet ef database update --project "e:\Users\Aleks\C#\it_academia\ita-todo\Common.Repositiories\Common.Repositiories.csproj"

@@ -14,14 +14,15 @@ namespace Users.Services;
 
 public class AuthService : IAuthService
 {
-    private readonly IRepository<User> _userRepository;
-    private readonly IRepository<UserRole> _roleRepository;
+    private readonly IRepository<ApplicationUser> _userRepository;
+    private readonly IRepository<ApplicationUserRole> _roleRepository;
     private readonly IConfiguration _config;
 
-    public AuthService(IRepository<User> userRepository, IRepository<UserRole> roleRepository, IConfiguration config)
+    public AuthService(IRepository<ApplicationUser> userRepository, IRepository<ApplicationUserRole> roleRepository, IConfiguration config)
     {
-        _userRepository = userRepository;
         _config = config;
+
+        _userRepository = userRepository;
         _roleRepository = roleRepository;
     }
 
@@ -33,19 +34,19 @@ public class AuthService : IAuthService
             throw new BadRequestException("Invalid login or password");
         }
 
+
         if(PasswordHashUtils.Verify(userDto.Password, user.Password) == false) 
         {
             throw new FormatException();
         }
 
-        var role = await _roleRepository.SingleOrDefaultAsync(t => t.Id == user.RoleId, cancellationToken);
-
         var claims = new List<Claim>()
         {
             new (ClaimTypes.Name, user.Login),
             new (ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new (ClaimTypes.Role, role!.Name),
         };
+
+        claims.AddRange(user.Roles.Select(role => new Claim(ClaimTypes.Role, role.ApplicationUserRole.Name)));
 
         var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
         var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256Signature);
