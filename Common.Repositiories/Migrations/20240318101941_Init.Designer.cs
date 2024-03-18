@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Common.Repositiories.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240314105653_Init")]
+    [Migration("20240318101941_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -25,7 +25,7 @@ namespace Common.Repositiories.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("Common.Domain.User", b =>
+            modelBuilder.Entity("Common.Domain.ApplicationUser", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -50,12 +50,25 @@ namespace Common.Repositiories.Migrations
                     b.HasIndex("Login")
                         .IsUnique();
 
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("Users");
+                    b.ToTable("ApplicationUsers");
                 });
 
-            modelBuilder.Entity("Common.Domain.UserRole", b =>
+            modelBuilder.Entity("Common.Domain.ApplicationUserApplicationRole", b =>
+                {
+                    b.Property<int>("ApplicationUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ApplicationUserRoleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ApplicationUserId", "ApplicationUserRoleId");
+
+                    b.HasIndex("ApplicationUserRoleId");
+
+                    b.ToTable("ApplicationUserApplicationRole");
+                });
+
+            modelBuilder.Entity("Common.Domain.ApplicationUserRole", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -70,7 +83,7 @@ namespace Common.Repositiories.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserRoles");
+                    b.ToTable("ApplicationUserRoles");
                 });
 
             modelBuilder.Entity("Todos.Domain.Todo", b =>
@@ -105,20 +118,28 @@ namespace Common.Repositiories.Migrations
                     b.ToTable("Todos");
                 });
 
-            modelBuilder.Entity("Common.Domain.User", b =>
+            modelBuilder.Entity("Common.Domain.ApplicationUserApplicationRole", b =>
                 {
-                    b.HasOne("Common.Domain.UserRole", "Role")
-                        .WithMany("Users")
-                        .HasForeignKey("RoleId")
+                    b.HasOne("Common.Domain.ApplicationUser", "ApplicationUser")
+                        .WithMany("Roles")
+                        .HasForeignKey("ApplicationUserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Role");
+                    b.HasOne("Common.Domain.ApplicationUserRole", "ApplicationUserRole")
+                        .WithMany("Users")
+                        .HasForeignKey("ApplicationUserRoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
+
+                    b.Navigation("ApplicationUserRole");
                 });
 
             modelBuilder.Entity("Todos.Domain.Todo", b =>
                 {
-                    b.HasOne("Common.Domain.User", "Owner")
+                    b.HasOne("Common.Domain.ApplicationUser", "Owner")
                         .WithMany()
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -127,7 +148,12 @@ namespace Common.Repositiories.Migrations
                     b.Navigation("Owner");
                 });
 
-            modelBuilder.Entity("Common.Domain.UserRole", b =>
+            modelBuilder.Entity("Common.Domain.ApplicationUser", b =>
+                {
+                    b.Navigation("Roles");
+                });
+
+            modelBuilder.Entity("Common.Domain.ApplicationUserRole", b =>
                 {
                     b.Navigation("Users");
                 });

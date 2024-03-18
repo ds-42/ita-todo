@@ -20,10 +20,18 @@ public class AuthController : ControllerBase
     }
 
 
-    [HttpPost("GetJwtToken")]
-    public async Task<IActionResult> GetJwtToken(AuthDto authDto, CancellationToken cancellationToken)
+    [HttpPost("CreateJwtToken")]
+    public async Task<IActionResult> CreateJwtToken(AuthDto authDto, CancellationToken cancellationToken)
     {
-        var token = await _authService.GetJwtToken(authDto, cancellationToken);
+        var token = await _authService.GetJwtTokenAsync(authDto, cancellationToken);
+
+        return Ok(token);
+    }
+
+    [HttpPost("CreateJwtTokenByRefreshToken")]
+    public async Task<IActionResult> CreateJwtTokenByRefreshToken(string refreshToken, CancellationToken cancellationToken)
+    {
+        var token = await _authService.GetJwtTokenByRefreshTokenAsync(refreshToken, cancellationToken);
 
         return Ok(token);
     }

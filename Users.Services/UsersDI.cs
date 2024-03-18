@@ -14,6 +14,7 @@ public static class UsersDI
     {
         services.AddAutoMapper(typeof(AutoMapperProfile));
 
+        services.AddTransient<IRepository<RefreshToken>, SqlServerBaseRepository<RefreshToken>>();
         services.AddTransient<IRepository<ApplicationUser>, SqlServerBaseRepository<ApplicationUser>>();
         services.AddTransient<IRepository<ApplicationUserRole>, SqlServerBaseRepository<ApplicationUserRole>>();
         services.AddTransient<IRepository<ApplicationUserApplicationRole>, SqlServerBaseRepository<ApplicationUserApplicationRole>>();

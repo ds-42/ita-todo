@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Todos.Domain;
 using Todos.Services;
@@ -5,6 +6,7 @@ using Todos.Services.Dto;
 
 namespace Todos.Api.Controllers;
 
+[Authorize]
 [ApiController]
 [Route("todos")]
 public class TodoController : ControllerBase
@@ -37,7 +39,7 @@ public class TodoController : ControllerBase
         return Ok(item);
     }
 
-    protected IActionResult GetIsDoneState(Todo item) 
+    protected IActionResult GetIsDoneState(GetTodoDto item) 
     {
         return Ok(new
         {

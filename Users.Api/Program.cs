@@ -27,8 +27,10 @@ try
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
+    
+    builder.Services.AddCommonServices();
+    builder.Services.AddUserServices();
     builder.Services.AddTodoDatabase(builder.Configuration);
-    builder.Services.AddSwaggerGen();
 
     builder.Services.AddSwaggerGen(options => 
     {
@@ -64,7 +66,6 @@ try
         });
     });
 
-    builder.Services.AddUserServices();
     builder.Services.AddFluentValidationAutoValidation();
 
     builder.Services.AddAuthorization();

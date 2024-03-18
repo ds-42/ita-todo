@@ -70,6 +70,23 @@ namespace Common.Repositiories
                 : await set.SingleOrDefaultAsync(predicate, cancellationToken);
         }
 
+        public async Task<T> SingleAsync(Expression<Func<T, bool>>? predicate, CancellationToken cancellationToken = default)
+        {
+            var set = _dbContext.Set<T>();
+
+            return predicate == null
+                ? await set.SingleAsync(cancellationToken)
+                : await set.SingleAsync(predicate, cancellationToken);
+        }
+
+        public async Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>>? predicate, CancellationToken cancellationToken = default)
+        {
+            var set = _dbContext.Set<T>();
+
+            return predicate == null
+                ? await set.FirstOrDefaultAsync(cancellationToken)
+                : await set.FirstOrDefaultAsync(predicate, cancellationToken);
+        }
 
         public async Task<T> AddAsync(T item, CancellationToken cancellationToken = default)
         {
@@ -82,7 +99,7 @@ namespace Common.Repositiories
         public async Task<T> UpdateAsync(T item, CancellationToken cancellationToken = default)
         {
             var set = _dbContext.Set<T>();
-            set.Update(item); // faq: почему нет асинхронного метода
+            set.Update(item); 
             await _dbContext.SaveChangesAsync(cancellationToken);
             return item;
         }

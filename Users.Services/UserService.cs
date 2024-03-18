@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using Common.Api.Services;
 using Common.BL.Exceptions;
 using Common.Domain;
+using Common.Domain.Exceptions;
 using Common.Repositories;
 using Users.Services.Dto;
 using Users.Services.Utils;
@@ -11,12 +13,18 @@ public class UserService : IUserService
 {
     private readonly IRepository<ApplicationUser> _userRepository;
     private readonly IRepository<ApplicationUserRole> _userRoles;
+    private readonly ICurrentUserService _currentUser;
     private readonly IMapper _mapper;
 
-    public UserService(IRepository<ApplicationUser> userRepositiry, IRepository<ApplicationUserRole> userRoles, IMapper mapper) 
+    public UserService(
+        IRepository<ApplicationUser> userRepositiry, 
+        IRepository<ApplicationUserRole> userRoles, 
+        ICurrentUserService currentUser, 
+        IMapper mapper) 
     {
         _userRepository = userRepositiry;
         _userRoles = userRoles;
+        _currentUser = currentUser;
         _mapper = mapper;
     }
 
@@ -29,6 +37,16 @@ public class UserService : IUserService
                 ? null 
                 : t => t.Login.Contains(nameText, StringComparison.InvariantCultureIgnoreCase), 
             t => t.Id, null, cancellationToken));
+    }
+
+    protected async Task<ApplicationUser> GetUserAsync(int id, CancellationToken cancellationToken = default)
+    {
+        var user = await _userRepository.SingleOrDefaultAsync(t => t.Id == id, cancellationToken);
+
+        if (user == null)
+            throw new InvalidUserException(id);
+
+        return user;
     }
 
     public async Task<GetUserDto?> GetByIdOrDefaultAsync(int id, CancellationToken cancellationToken = default)
@@ -45,7 +63,7 @@ public class UserService : IUserService
             throw new BadRequestException("Invalid login or password");
         }
 
-        var userRoles = (await _userRoles.SingleOrDefaultAsync(t => t.Name == "Admin", cancellationToken))!;
+        var userRoles = (await _userRoles.SingleOrDefaultAsync(t => t.Name == "Client", cancellationToken))!;
 
         var user = new ApplicationUser()
         {
@@ -58,14 +76,27 @@ public class UserService : IUserService
     }
 
 
-    public async Task<GetUserDto?> UpdateAsync(ApplicationUser user, CancellationToken cancellationToken = default)
+    public async Task<GetUserDto> UpdateAsync(int id, UpdateUserDto user, CancellationToken cancellationToken = default)
     {
-        var item = await GetByIdOrDefaultAsync(user.Id, cancellationToken);
+        _currentUser.TestAccess(id);
 
-        if (item == null) 
-            return null;
+        var item = await GetUserAsync(id, cancellationToken);
 
-        return _mapper.Map<GetUserDto>(await _userRepository.UpdateAsync(user, cancellationToken));
+        item.Login = user.Login;
+        item.Password = PasswordHashUtils.Hash(user.Password);
+
+        return _mapper.Map<GetUserDto>(await _userRepository.UpdateAsync(item, cancellationToken));
+    }
+
+    public async Task<GetUserDto> ChangePasswordAsync(int id, string password, CancellationToken cancellationToken = default)
+    {
+        _currentUser.TestAccess(id);
+
+        var item = await GetUserAsync(id, cancellationToken);
+
+        item.Password = PasswordHashUtils.Hash(password);
+
+        return _mapper.Map<GetUserDto>(await _userRepository.UpdateAsync(item, cancellationToken));
     }
 
     public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken = default)

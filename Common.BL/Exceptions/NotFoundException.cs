@@ -5,7 +5,7 @@ namespace Common.BL.Exceptions;
 
 public class NotFoundException : HttpException
 {
-    public NotFoundException(object filter) : base(JsonSerializer.Serialize(filter), HttpStatusCode.NotFound)
+    public NotFoundException(object filter) : base(filter, HttpStatusCode.NotFound)
     {
     }
 

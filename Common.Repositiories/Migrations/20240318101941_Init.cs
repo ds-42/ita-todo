@@ -12,7 +12,7 @@ namespace Common.Repositiories.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "UserRoles",
+                name: "ApplicationUserRoles",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -21,11 +21,21 @@ namespace Common.Repositiories.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserRoles", x => x.Id);
+                    table.PrimaryKey("PK_ApplicationUserRoles", x => x.Id);
                 });
 
+            migrationBuilder.InsertData(
+                table: "ApplicationUserRoles",
+                columns: new[] { "Id", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Admin"},
+                    { 2, "Client"},
+                });
+
+
             migrationBuilder.CreateTable(
-                name: "Users",
+                name: "ApplicationUsers",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -36,22 +46,31 @@ namespace Common.Repositiories.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Users_UserRoles_RoleId",
-                        column: x => x.RoleId,
-                        principalTable: "UserRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                    table.PrimaryKey("PK_ApplicationUsers", x => x.Id);
                 });
 
-            migrationBuilder.InsertData(
-                table: "UserRoles",
-                columns: new[] { "Id", "Name"} ,
-                values: new object[,] 
+            migrationBuilder.CreateTable(
+                name: "ApplicationUserApplicationRole",
+                columns: table => new
                 {
-                    { 1, "Admin"},
-                    { 2, "Client"},
+                    ApplicationUserId = table.Column<int>(type: "int", nullable: false),
+                    ApplicationUserRoleId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ApplicationUserApplicationRole", x => new { x.ApplicationUserId, x.ApplicationUserRoleId });
+                    table.ForeignKey(
+                        name: "FK_ApplicationUserApplicationRole_ApplicationUserRoles_ApplicationUserRoleId",
+                        column: x => x.ApplicationUserRoleId,
+                        principalTable: "ApplicationUserRoles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ApplicationUserApplicationRole_ApplicationUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "ApplicationUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -70,41 +89,44 @@ namespace Common.Repositiories.Migrations
                 {
                     table.PrimaryKey("PK_Todos", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Todos_Users_OwnerId",
+                        name: "FK_Todos_ApplicationUsers_OwnerId",
                         column: x => x.OwnerId,
-                        principalTable: "Users",
+                        principalTable: "ApplicationUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Todos_OwnerId",
-                table: "Todos",
-                column: "OwnerId");
+                name: "IX_ApplicationUserApplicationRole_ApplicationUserRoleId",
+                table: "ApplicationUserApplicationRole",
+                column: "ApplicationUserRoleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Users_Login",
-                table: "Users",
+                name: "IX_ApplicationUsers_Login",
+                table: "ApplicationUsers",
                 column: "Login",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Users_RoleId",
-                table: "Users",
-                column: "RoleId");
+                name: "IX_Todos_OwnerId",
+                table: "Todos",
+                column: "OwnerId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "ApplicationUserApplicationRole");
+
+            migrationBuilder.DropTable(
                 name: "Todos");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "ApplicationUserRoles");
 
             migrationBuilder.DropTable(
-                name: "UserRoles");
+                name: "ApplicationUsers");
         }
     }
 }

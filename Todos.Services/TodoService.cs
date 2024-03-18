@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Common.Api.Services;
 using Common.Domain;
 using Common.Domain.Exceptions;
 using Common.Repositories;
@@ -6,8 +7,8 @@ using FluentValidation;
 using Serilog;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Reflection.Metadata.Ecma335;
 using System.Text.Json;
+using System.Threading;
 using Todos.Domain;
 using Todos.Services.Dto;
 using Todos.Services.Validators;
@@ -18,22 +19,28 @@ public class TodoService : ITodoService
 {
     private readonly IRepository<Todo> _todoRepository;
     private readonly IRepository<ApplicationUser> _userRepository;
+    private readonly ICurrentUserService _currentUser;
     private readonly IMapper _mapper;
 
     public TodoService(
         IRepository<Todo> todoRepository, 
         IRepository<ApplicationUser> userRepository,
+        ICurrentUserService currentUser,
         IMapper mapper) 
     {
         _todoRepository = todoRepository;
         _userRepository = userRepository;
+        _currentUser = currentUser;
         _mapper = mapper;
     }
 
-    public async Task<IReadOnlyCollection<Todo>> GetItemsAsync(int offset = 0, int limit = 10, string labelText = "", int ownerId = 0, CancellationToken cancellationToken = default) 
+    public async Task<IReadOnlyCollection<GetTodoDto>> GetItemsAsync(int offset = 0, int limit = 10, string labelText = "", int ownerId = 0, CancellationToken cancellationToken = default) 
     {
         var param = Expression.Parameter(typeof(Todo), nameof(Todo));
         Expression? body = null;
+
+        if (!_currentUser.IsAdmin)
+            ownerId = _currentUser.UserId;
 
         if (ownerId > 0)
         { 
@@ -58,11 +65,11 @@ public class TodoService : ITodoService
 
         body ??= Expression.Constant(true);
 
-        return await _todoRepository.GetItemsAsync(
+        return _mapper.Map<IReadOnlyCollection<GetTodoDto>>(await _todoRepository.GetItemsAsync(
             offset, 
             limit, 
             Expression.Lambda<Func<Todo, bool>>(body, param), 
-            t => t.Id, false, cancellationToken);
+            t => t.Id, false, cancellationToken));
     }
 
     public async Task<int> CountAsync(string labelText = "", CancellationToken cancellationToken = default)
@@ -72,8 +79,7 @@ public class TodoService : ITodoService
             : await _todoRepository.CountAsync(t => t.Label.Contains(labelText), cancellationToken);
     }
 
-
-    public async Task<Todo> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+    protected async Task<Todo> GetRecordAsync(int id, CancellationToken cancellationToken = default) 
     {
         var item = await _todoRepository
             .SingleOrDefaultAsync(t => t.Id == id, cancellationToken);
@@ -84,13 +90,32 @@ public class TodoService : ITodoService
         return item;
     }
 
-    public async Task<Todo> CreateAsync(CreateTodoDto todo, CancellationToken cancellationToken = default) 
+    public async Task<GetTodoDto> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+    {
+        var item = await GetRecordAsync(id, cancellationToken);
+
+        _currentUser.TestAccess(item.OwnerId);
+
+        return _mapper.Map<GetTodoDto>(item);
+    }
+
+    protected async Task<ApplicationUser> TestOwnerByIdAsync(int userId, CancellationToken cancellationToken = default) 
     {
         var user = await _userRepository
-            .SingleOrDefaultAsync(t => t.Id == todo.OwnerId, cancellationToken);
-        
+            .SingleOrDefaultAsync(t => t.Id == userId, cancellationToken);
+
         if (user == null)
-            throw new InvalidUserException(todo.OwnerId);
+            throw new InvalidUserException(userId);
+
+        return user;
+    }
+
+    public async Task<GetTodoDto> CreateAsync(CreateTodoDto todo, CancellationToken cancellationToken = default) 
+    {
+        if (!_currentUser.IsAdmin)
+            todo.OwnerId = _currentUser.UserId;
+
+        await TestOwnerByIdAsync(todo.OwnerId, cancellationToken);
 
         var item = _mapper.Map<CreateTodoDto, Todo>(todo);
 
@@ -101,47 +126,55 @@ public class TodoService : ITodoService
 
         Log.Information($"Добавлена новая запись: {JsonSerializer.Serialize(item)}");
 
-        return item;
+        return _mapper.Map<GetTodoDto>(item);
     }
 
-    public async Task<Todo> UpdateAsync(UpdateTodoDto todo, CancellationToken cancellationToken = default)
+    public async Task<GetTodoDto> UpdateAsync(UpdateTodoDto todo, CancellationToken cancellationToken = default)
     {
-        var user = await _userRepository
-            .SingleOrDefaultAsync(t => t.Id == todo.OwnerId, cancellationToken);
+        if (!_currentUser.IsAdmin)
+            todo.OwnerId = _currentUser.UserId;
 
-        if (user == null)
-            throw new InvalidUserException(todo.OwnerId);
+        await TestOwnerByIdAsync(todo.OwnerId, cancellationToken);
 
-        var item = await GetByIdAsync(todo.Id, cancellationToken);
-        _mapper.Map<UpdateTodoDto, Todo>(todo, item);
+        var item = await GetRecordAsync(todo.Id, cancellationToken);
+
+        _currentUser.TestAccess(item.OwnerId);
+
+        _mapper.Map(todo, item);
         item.UpdateDate = DateTime.UtcNow;
 
         item = await _todoRepository.UpdateAsync(item, cancellationToken);
 
-        Log.Information($"Запись изменена: {JsonSerializer.Serialize(item)}");
+//        Log.Information($"Запись изменена: {JsonSerializer.Serialize(item)}");
 
-        return item;
+        return _mapper.Map<GetTodoDto>(item);
     }
 
-    public async Task<Todo> DeleteAsync(int id, CancellationToken cancellationToken = default)
+    public async Task<GetTodoDto> DeleteAsync(int id, CancellationToken cancellationToken = default)
     {
-        var item = await GetByIdAsync(id, cancellationToken);
+        var item = await GetRecordAsync(id, cancellationToken);
+
+        _currentUser.TestAccess(item.OwnerId);
+
         await _todoRepository.DeleteAsync(item, cancellationToken);
 
-        Log.Information($"Запись удалена: {JsonSerializer.Serialize(item)}");
-        return item;
+//        Log.Information($"Запись удалена: {JsonSerializer.Serialize(item)}");
+
+        return _mapper.Map<GetTodoDto>(item);
     }
 
-    public async Task<Todo> DoneAsync(int id, CancellationToken cancellationToken = default)    
+    public async Task<GetTodoDto> DoneAsync(int id, CancellationToken cancellationToken = default)    
     {
-        var item = await GetByIdAsync(id, cancellationToken);
+        var item = await GetRecordAsync(id, cancellationToken);
+
+        _currentUser.TestAccess(item.OwnerId);
 
         item.IsDone = true;
         await _todoRepository.UpdateAsync(item, cancellationToken);
 
-        Log.Information($"Признак выполнения изменен: {JsonSerializer.Serialize(item)}");
+//        Log.Information($"Признак выполнения изменен: {JsonSerializer.Serialize(item)}");
 
-        return item;
+        return _mapper.Map<GetTodoDto>(item);
     }
 
 }

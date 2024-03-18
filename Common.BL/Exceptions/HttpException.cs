@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.Net;
+using System.Text.Json;
 
 namespace Common.BL.Exceptions;
 
@@ -10,6 +11,11 @@ public class HttpException : Exception
     public HttpException(string message, HttpStatusCode statusCode = HttpStatusCode.InternalServerError) : base(message)
     { 
         StatusCode = statusCode;
+    }
+
+    public HttpException(object item, HttpStatusCode statusCode = HttpStatusCode.InternalServerError) :
+        this(JsonSerializer.Serialize(item), statusCode)
+    { 
     }
 
     public virtual async Task WriteAsync(HttpContext httpContext)

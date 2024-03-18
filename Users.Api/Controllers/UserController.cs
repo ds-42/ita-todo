@@ -19,6 +19,28 @@ public class UserController : ControllerBase
         _userService = userService;
     }
 
+    [AllowAnonymous]
+    [HttpGet]
+    public async Task<IActionResult> Get(int offset = 0, int limit = 10, string nameText = "", CancellationToken cancellationToken = default)
+    {
+        var items = await _userService.GetItemsAsync(offset, limit, nameText, cancellationToken);
+        return Ok(items);
+    }
+
+    [AllowAnonymous]
+    [HttpGet("{id}")]
+    public async Task<IActionResult> GetUser(int id, CancellationToken cancellationToken = default)
+    {
+        var item = await _userService.GetByIdOrDefaultAsync(id, cancellationToken);
+
+        if (item == null)
+        {
+            return NotFound($"users/{id}");
+        }
+
+        return Ok(item);
+    }
+
 
     [AllowAnonymous]
     [HttpPost]
@@ -29,43 +51,18 @@ public class UserController : ControllerBase
         return Created($"users/{item.Id}", item);
     }
 
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateUser(int id, UpdateUserDto user, CancellationToken cancellationToken = default)
+    {
+        return Ok(await _userService.UpdateAsync(id, user, cancellationToken));
+    }
 
+    [HttpPatch("{id}/password")]
+    public async Task<IActionResult> ChangePassword(int id, string password, CancellationToken cancellationToken = default)
+    {
+        return Ok(await _userService.ChangePasswordAsync(id, password, cancellationToken));
+    }
     /*
-        [HttpGet]
-        public async Task<IActionResult> Get(int offset = 0, int limit = 10, string nameText = "", CancellationToken cancellationToken = default)
-        {
-            var items = await _userService.GetItemsAsync(offset, limit, nameText, cancellationToken);
-            return Ok(items);
-        }
-
-
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetUser(int id, CancellationToken cancellationToken = default)
-        {
-            var item = await _userService.GetByIdOrDefaultAsync(id, cancellationToken);
-
-            if (item == null)
-            {
-                return NotFound($"/{id}");
-            }
-
-            return Ok(item);
-        }
-
-
-
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id, User user, CancellationToken cancellationToken = default)
-        {
-            user.Id = id;
-            var item = await _authService.UpdateAsync(user, cancellationToken);
-
-            if (item == null)
-                return NotFound($"{id}");
-
-            return Ok(item);
-        }
-
 
         [HttpDelete]
         public async Task<IActionResult> DeleteUser([FromBody] int id, CancellationToken cancellationToken = default)

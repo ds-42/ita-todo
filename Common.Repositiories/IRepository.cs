@@ -20,6 +20,8 @@ public interface IRepository<T> where T : class, new()
     Task<int> CountAsync(Expression<Func<T, bool>>? predicate = null, CancellationToken cancellationToken = default);
 
     Task<T?> SingleOrDefaultAsync(Expression<Func<T, bool>>? predicate = null, CancellationToken cancellationToken = default);
+    Task<T> SingleAsync(Expression<Func<T, bool>>? predicate = null, CancellationToken cancellationToken = default);
+    Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>>? predicate = null, CancellationToken cancellationToken = default);
 
     Task<T> AddAsync(T item, CancellationToken cancellationToken = default);
     Task<T> UpdateAsync(T item, CancellationToken cancellationToken = default);
