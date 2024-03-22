@@ -1,6 +1,7 @@
 using Common.Api;
 using Common.Repositiories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -15,7 +16,7 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.File("Logs/errors-.txt", LogEventLevel.Error, rollingInterval: RollingInterval.Day)
     .CreateLogger();
 
-try 
+try
 {
     var builder = WebApplication.CreateBuilder(args);
 

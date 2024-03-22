@@ -4,7 +4,7 @@ using System.Security.Claims;
 using Users.Services;
 using Users.Services.Dto;
 
-namespace Todos.Api.Controllers;
+namespace Auth.Api.Controllers;
 
 [ApiController]
 [Route("auth")]
