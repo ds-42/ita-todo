@@ -6,14 +6,14 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
-namespace Users.Services.Utils;
+namespace Common.BL.Extensions;
 
-public class Utils
+public static class SerializeExtension
 {
-    public static string SerializeObject(object value) 
+    public static string JsonSerialize(this object value)
     {
-        return JsonSerializer.Serialize(value, new JsonSerializerOptions() 
-        { 
+        return JsonSerializer.Serialize(value, new JsonSerializerOptions()
+        {
             ReferenceHandler = ReferenceHandler.IgnoreCycles
         });
     }

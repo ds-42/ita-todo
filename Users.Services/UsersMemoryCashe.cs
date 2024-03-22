@@ -8,5 +8,6 @@ public class UsersMemoryCache
         new MemoryCacheOptions
         {
             SizeLimit = 1024,
+            ExpirationScanFrequency = TimeSpan.FromSeconds(1)
         });
 }

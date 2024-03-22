@@ -14,6 +14,7 @@ using System.Threading;
 using Todos.Domain;
 using Todos.Services.Dto;
 using Todos.Services.Validators;
+using Common.BL.Extensions;
 
 namespace Todos.Services;
 
@@ -126,13 +127,7 @@ public class TodoService : ITodoService
 
         item = await _todoRepository.AddAsync(item, cancellationToken);
 
-        JsonSerializerOptions options = new()
-        {
-            ReferenceHandler = ReferenceHandler.IgnoreCycles,
-            WriteIndented = true
-        };
-
-        Log.Information($"Добавлена новая запись: {JsonSerializer.Serialize(item, options)}");
+        Log.Information($"Добавлена новая запись: {item.JsonSerialize()}");
 
         return _mapper.Map<GetTodoDto>(item);
     }
@@ -153,7 +148,7 @@ public class TodoService : ITodoService
 
         item = await _todoRepository.UpdateAsync(item, cancellationToken);
 
-//        Log.Information($"Запись изменена: {JsonSerializer.Serialize(item)}");
+//        Log.Information($"Запись изменена: {JsonSerializer.JsonSerialize(item)}");
 
         return _mapper.Map<GetTodoDto>(item);
     }
@@ -166,7 +161,7 @@ public class TodoService : ITodoService
 
         await _todoRepository.DeleteAsync(item, cancellationToken);
 
-//        Log.Information($"Запись удалена: {JsonSerializer.Serialize(item)}");
+//        Log.Information($"Запись удалена: {JsonSerializer.JsonSerialize(item)}");
 
         return _mapper.Map<GetTodoDto>(item);
     }
@@ -180,7 +175,7 @@ public class TodoService : ITodoService
         item.IsDone = true;
         await _todoRepository.UpdateAsync(item, cancellationToken);
 
-//        Log.Information($"Признак выполнения изменен: {JsonSerializer.Serialize(item)}");
+//        Log.Information($"Признак выполнения изменен: {JsonSerializer.JsonSerialize(item)}");
 
         return _mapper.Map<GetTodoDto>(item);
     }
