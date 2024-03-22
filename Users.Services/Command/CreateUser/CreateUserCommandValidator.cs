@@ -1,11 +1,10 @@
 ﻿using FluentValidation;
-using Users.Services.Dto;
 
-namespace Users.Services.Validators;
+namespace Users.Services.Command.CreateUser;
 
-public class CreateUserDtoValidator : AbstractValidator<CreateUserDto>
+public class CreateUserCommandValidator : AbstractValidator<CreateUserCommand>
 {
-    public CreateUserDtoValidator() 
+    public CreateUserCommandValidator()
     {
         RuleFor(t => t.Login).MinimumLength(5).MaximumLength(50).NotEmpty();
         RuleFor(t => t.Password).MinimumLength(5).MaximumLength(50).NotEmpty();

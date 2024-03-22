@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Users.Services.Dto;
+namespace Users.Services.Command.CreateUser;
 
-public class CreateUserDto
+public class CreateUserCommand
 {
     public string Login { get; set; } = default!;
     public string Password { get; set; } = default!;

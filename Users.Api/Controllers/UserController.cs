@@ -1,9 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
-using Common.Domain;
 using Users.Services;
 using Users.Services.Dto;
 using Microsoft.AspNetCore.Authorization;
-using System.Security.Claims;
+using Users.Services.Command.CreateUser;
+using Users.Services.Query.GetList;
+using Users.Services.Query.GetCount;
 
 namespace Users.Api.Controllers;
 
@@ -21,9 +22,16 @@ public class UserController : ControllerBase
 
     [AllowAnonymous]
     [HttpGet]
-    public async Task<IActionResult> Get(int offset = 0, int limit = 10, string nameText = "", CancellationToken cancellationToken = default)
+    public async Task<IActionResult> Get(
+        [FromQuery] GetListQuery getListQuery,
+        [FromServices] GetListQueryHandler getListQueryHandler,
+        [FromServices] GetCountQueryHandler getCountQueryHandler,
+        CancellationToken cancellationToken = default)
     {
-        var items = await _userService.GetItemsAsync(offset, limit, nameText, cancellationToken);
+        var items = await getListQueryHandler.RunAsync(getListQuery, cancellationToken);
+        var count = await getCountQueryHandler.RunAsync(getListQuery, cancellationToken);
+
+        HttpContext.Response.Headers.Append("X-Total-Count", count.ToString());
         return Ok(items);
     }
 
@@ -44,9 +52,12 @@ public class UserController : ControllerBase
 
     [AllowAnonymous]
     [HttpPost]
-    public async Task<IActionResult> CreateUser(CreateUserDto user, CancellationToken cancellationToken = default)
+    public async Task<IActionResult> CreateUser(
+        CreateUserCommand createUserRequest, 
+        [FromServices] CreateUserCommandHandler createUserCommandHandler, 
+        CancellationToken cancellationToken = default)
     {
-        var item = await _userService.CreateAsync(user, cancellationToken);
+        var item = await createUserCommandHandler.RunAsync(createUserRequest, cancellationToken);
 
         return Created($"users/{item.Id}", item);
     }

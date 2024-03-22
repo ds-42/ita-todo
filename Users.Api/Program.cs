@@ -31,6 +31,7 @@ try
     builder.Services.AddCommonServices();
     builder.Services.AddUserServices();
     builder.Services.AddTodoDatabase(builder.Configuration);
+    builder.Services.AddMemoryCache();
 
     builder.Services.AddSwaggerGen(options => 
     {
