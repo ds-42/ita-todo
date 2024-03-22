@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Common.Api.Services;
+using Common.Api.Extensions;
 using Common.Domain;
 using Common.Domain.Exceptions;
 using Common.Repositories;
@@ -8,6 +9,7 @@ using Serilog;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading;
 using Todos.Domain;
 using Todos.Services.Dto;
@@ -124,7 +126,13 @@ public class TodoService : ITodoService
 
         item = await _todoRepository.AddAsync(item, cancellationToken);
 
-        Log.Information($"Добавлена новая запись: {JsonSerializer.Serialize(item)}");
+        JsonSerializerOptions options = new()
+        {
+            ReferenceHandler = ReferenceHandler.IgnoreCycles,
+            WriteIndented = true
+        };
+
+        Log.Information($"Добавлена новая запись: {JsonSerializer.Serialize(item, options)}");
 
         return _mapper.Map<GetTodoDto>(item);
     }

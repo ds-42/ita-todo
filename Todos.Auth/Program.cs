@@ -7,34 +7,26 @@ using Serilog;
 using Serilog.Events;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 using System.Text;
-using System.Text.Json;
 using System.Text.Json.Serialization;
-using Todos.Api.Repositories;
-using Todos.Services;
-
+using Users.Services;
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
     .WriteTo.File("Logs/information-.txt", LogEventLevel.Information, rollingInterval: RollingInterval.Day)
     .WriteTo.File("Logs/errors-.txt", LogEventLevel.Error, rollingInterval: RollingInterval.Day)
     .CreateLogger();
 
-try
+try 
 {
-
     var builder = WebApplication.CreateBuilder(args);
-
-    // AddAsync services to the container.
 
     builder.Services.AddControllers()
         .AddJsonOptions(t => t.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
-
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
 
     builder.Services.AddCommonServices();
-    builder.Services.AddTodoServices();
-//    builder.Services.AddUserServices();
+    builder.Services.AddUserServices();
     builder.Services.AddTodoDatabase(builder.Configuration);
 
     builder.Services.AddSwaggerGen(options =>
@@ -90,6 +82,7 @@ try
             };
         });
 
+
     builder.Host.UseSerilog();
 
     var app = builder.Build();
@@ -101,10 +94,6 @@ try
     {
         app.UseSwagger();
         app.UseSwaggerUI();
-
-
-        //await builder.Services.UploadUserData();
-        //await builder.Services.UploadTodoData();
     }
 
     app.UseHttpsRedirection();
@@ -114,9 +103,7 @@ try
 
     app.MapControllers();
 
-    Log.Information("Appliation running ...");
     app.Run();
-
 }
 catch (Exception e)
 {

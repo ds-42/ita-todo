@@ -14,6 +14,4 @@ public interface ICurrentUserService
     string[] UserRoles { get; }
 
     bool IsAdmin { get; }
-
-    void TestAccess(int userId);
 }

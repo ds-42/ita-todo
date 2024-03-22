@@ -3,3 +3,4 @@ obj/
 .vs/
 Todos.Api/Logs/
 Users.Api/Logs/
+Todos.Auth/Logs/

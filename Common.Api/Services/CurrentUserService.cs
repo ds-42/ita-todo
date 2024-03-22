@@ -27,12 +27,4 @@ public class CurrentUserService : ICurrentUserService
 
     public bool IsAdmin => UserRoles.Contains("Admin");
 
-    public void TestAccess(int userId)
-    {
-        if (IsAdmin || UserId == userId)
-            return;
-
-        throw new AccessDeniedException();
-    }
-
 }

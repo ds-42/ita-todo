@@ -4,10 +4,10 @@ using System.Security.Claims;
 using Users.Services;
 using Users.Services.Dto;
 
-namespace Users.Api.Controllers;
+namespace Todos.Api.Controllers;
 
 [ApiController]
-[Route("users")]
+[Route("auth")]
 public class AuthController : ControllerBase
 {
     protected readonly IAuthService _authService;
