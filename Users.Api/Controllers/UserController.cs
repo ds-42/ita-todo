@@ -1,10 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using Users.Services;
-using Users.Services.Dto;
 using Microsoft.AspNetCore.Authorization;
-using Users.Services.Command.CreateUser;
-using Users.Services.Query.GetList;
-using Users.Services.Query.GetCount;
+using Users.Application.Query.GetList;
+using Users.Application.Query.GetCount;
+using Users.Application.Command.CreateUser;
+using MediatR;
 
 namespace Users.Api.Controllers;
 
@@ -13,29 +12,21 @@ namespace Users.Api.Controllers;
 [Route("users")]
 public class UserController : ControllerBase
 {
-    protected readonly IUserService _userService;
-
-    public UserController(IUserService userService)
-    {
-        _userService = userService;
-    }
-
     [AllowAnonymous]
     [HttpGet]
     public async Task<IActionResult> Get(
         [FromQuery] GetListQuery getListQuery,
-        [FromServices] GetListQueryHandler getListQueryHandler,
-        [FromServices] GetCountQueryHandler getCountQueryHandler,
+        IMediator mediator,
         CancellationToken cancellationToken = default)
     {
-        var items = await getListQueryHandler.RunAsync(getListQuery, cancellationToken);
-        var count = await getCountQueryHandler.RunAsync(getListQuery, cancellationToken);
+        var items = await mediator.Send(getListQuery, cancellationToken);
+        var count = await mediator.Send(getListQuery, cancellationToken);
 
         HttpContext.Response.Headers.Append("X-Total-Count", count.ToString());
         return Ok(items);
     }
 
-    [AllowAnonymous]
+/*    [AllowAnonymous]
     [HttpGet("{id}")]
     public async Task<IActionResult> GetUser(int id, CancellationToken cancellationToken = default)
     {
@@ -47,22 +38,22 @@ public class UserController : ControllerBase
         }
 
         return Ok(item);
-    }
+    }*/
 
 
     [AllowAnonymous]
     [HttpPost]
     public async Task<IActionResult> CreateUser(
         CreateUserCommand createUserRequest, 
-        [FromServices] CreateUserCommandHandler createUserCommandHandler, 
+        IMediator mediator, 
         CancellationToken cancellationToken = default)
     {
-        var item = await createUserCommandHandler.RunAsync(createUserRequest, cancellationToken);
+        var item = await mediator.Send(createUserRequest, cancellationToken);
 
         return Created($"users/{item.Id}", item);
     }
 
-    [HttpPut("{id}")]
+/*    [HttpPut("{id}")]
     public async Task<IActionResult> UpdateUser(int id, UpdateUserDto user, CancellationToken cancellationToken = default)
     {
         return Ok(await _userService.UpdateAsync(id, user, cancellationToken));
@@ -73,14 +64,14 @@ public class UserController : ControllerBase
     {
         return Ok(await _userService.ChangePasswordAsync(id, password, cancellationToken));
     }
-    /*
+    
 
-        [HttpDelete]
-        public async Task<IActionResult> DeleteUser([FromBody] int id, CancellationToken cancellationToken = default)
-        {
-            if(await _authService.DeleteAsync(id, cancellationToken) == false)
-                return NotFound($"{id}");
+    [HttpDelete]
+    public async Task<IActionResult> DeleteUser([FromBody] int id, CancellationToken cancellationToken = default)
+    {
+        if(await _authService.DeleteAsync(id, cancellationToken) == false)
+            return NotFound($"{id}");
 
-            return Ok();
-        }*/
+        return Ok();
+    }*/
 }

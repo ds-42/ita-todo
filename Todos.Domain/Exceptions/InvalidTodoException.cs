@@ -1,11 +1,4 @@
-﻿using Common.BL.Exceptions;
-using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿using Common.Application.Exceptions;
 namespace Todos.Domain;
 
 public class InvalidTodoException : NotFoundException

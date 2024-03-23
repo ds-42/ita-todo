@@ -1,0 +1,8 @@
+﻿namespace Auth.Application.Dto;
+
+public class JwtTokenDto
+{
+    public string JwtToken { get; set; } = default!;
+    public string RefreshToken { get; set; } = default!;
+    public DateTime Expire { get; set; } = default!;
+}

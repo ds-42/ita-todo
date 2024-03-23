@@ -16,9 +16,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Common.Api\Common.Api.csproj" />
-    <ProjectReference Include="..\Common.BL\Common.BL.csproj" />
+    <ProjectReference Include="..\Common.Application\Common.Application.csproj" />
     <ProjectReference Include="..\Common.Domain\Common.Domain.csproj" />
-    <ProjectReference Include="..\Users.Services\Users.Services.csproj" />
+    <ProjectReference Include="..\Common.Repositiories\Common.Persistence.csproj" />
+    <ProjectReference Include="..\Users.Application\Users.Application.csproj" />
   </ItemGroup>
 
   <ItemGroup>

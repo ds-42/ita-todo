@@ -2,7 +2,7 @@
 using Common.Domain;
 using Todos.Domain;
 
-namespace Common.Repositiories;
+namespace Common.Persistence;
 
 public class ApplicationDbContext : DbContext
 {
@@ -22,7 +22,7 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<Todo>().Property(t => t.Label).HasMaxLength(100).IsRequired();
 
         modelBuilder.Entity<Todo>().HasOne(t => t.Owner)
-//            .WithMany(t => t.Todos)
+            //            .WithMany(t => t.Todos)
             .WithMany()
             .HasForeignKey(t => t.OwnerId);
 
@@ -37,7 +37,7 @@ public class ApplicationDbContext : DbContext
             .WithMany()
             .HasForeignKey(t => t.ApplicationUserId);
 
-        modelBuilder.Entity<ApplicationUserApplicationRole>().HasKey(t => 
+        modelBuilder.Entity<ApplicationUserApplicationRole>().HasKey(t =>
             new { t.ApplicationUserId, t.ApplicationUserRoleId });
         modelBuilder.Entity<ApplicationUserApplicationRole>().Navigation(t => t.ApplicationUserRole).AutoInclude();
 

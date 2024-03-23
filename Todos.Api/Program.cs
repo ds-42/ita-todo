@@ -1,5 +1,5 @@
 using Common.Api;
-using Common.Repositiories;
+using Common.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;

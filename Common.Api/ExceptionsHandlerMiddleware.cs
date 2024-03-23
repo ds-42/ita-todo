@@ -1,4 +1,4 @@
-﻿using Common.BL.Exceptions;
+﻿using Common.Application.Exceptions;
 using Microsoft.AspNetCore.Http;
 using System.Net;
 using System.Text.Json;

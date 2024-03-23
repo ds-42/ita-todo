@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Auth.Application;
+using Auth.Application.Dto;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using Users.Services;
-using Users.Services.Dto;
 
 namespace Auth.Api.Controllers;
 
@@ -11,12 +11,10 @@ namespace Auth.Api.Controllers;
 public class AuthController : ControllerBase
 {
     protected readonly IAuthService _authService;
-    protected readonly IUserService _userService;
 
-    public AuthController(IAuthService authService, IUserService userService)
+    public AuthController(IAuthService authService)
     {
         _authService = authService;
-        _userService = userService;
     }
 
 
@@ -34,24 +32,6 @@ public class AuthController : ControllerBase
         var token = await _authService.GetJwtTokenByRefreshTokenAsync(refreshToken, cancellationToken);
 
         return Ok(token);
-    }
-
-    [Authorize]
-    [HttpGet("GetMyInfo")]
-    public async Task<IActionResult> GetMyInfo(CancellationToken cancellationToken)
-    {
-        var curentUserId = User.FindFirst(ClaimTypes.NameIdentifier);
-        var user = await _userService.GetByIdOrDefaultAsync(int.Parse(curentUserId.Value), cancellationToken);
-        return Ok(user);
-    }
-
-    [Authorize(Roles = "Admin")]
-    [HttpGet("IAmAdmin")]
-    public async Task<IActionResult> IAmAdmin(CancellationToken cancellationToken)
-    {
-        var curentUserId = User.FindFirst(ClaimTypes.NameIdentifier);
-        var user = await _userService.GetByIdOrDefaultAsync(int.Parse(curentUserId.Value), cancellationToken);
-        return Ok(user);
     }
 
 }

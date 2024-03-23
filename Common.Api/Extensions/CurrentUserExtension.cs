@@ -1,5 +1,5 @@
-﻿using Common.Api.Services;
-using Common.BL.Exceptions;
+﻿using Common.Application.Abstractions;
+using Common.Application.Exceptions;
 
 namespace Common.Api.Extensions;
 

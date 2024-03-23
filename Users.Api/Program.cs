@@ -1,5 +1,6 @@
 using Common.Api;
-using Common.Repositiories;
+using Common.Application;
+using Common.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -8,7 +9,7 @@ using Serilog.Events;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 using System.Text;
 using System.Text.Json.Serialization;
-using Users.Services;
+using Users.Application;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
@@ -29,7 +30,8 @@ try
     builder.Services.AddEndpointsApiExplorer();
     
     builder.Services.AddCommonServices();
-    builder.Services.AddUserServices();
+    builder.Services.AddUserApplication();
+    builder.Services.AddCommonApplication();
     builder.Services.AddTodoDatabase(builder.Configuration);
     builder.Services.AddMemoryCache();
 
@@ -66,8 +68,6 @@ try
             },
         });
     });
-
-    builder.Services.AddFluentValidationAutoValidation();
 
     builder.Services.AddAuthorization();
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

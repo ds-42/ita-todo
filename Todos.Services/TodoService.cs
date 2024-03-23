@@ -14,7 +14,7 @@ using System.Threading;
 using Todos.Domain;
 using Todos.Services.Dto;
 using Todos.Services.Validators;
-using Common.BL.Extensions;
+using Common.Application.Extensions;
 
 namespace Todos.Services;
 
