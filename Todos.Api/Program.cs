@@ -7,10 +7,8 @@ using Serilog;
 using Serilog.Events;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 using System.Text;
-using System.Text.Json;
 using System.Text.Json.Serialization;
-using Todos.Api.Repositories;
-using Todos.Services;
+using Todos.Application;
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
@@ -33,7 +31,7 @@ try
     builder.Services.AddEndpointsApiExplorer();
 
     builder.Services.AddCommonServices();
-    builder.Services.AddTodoServices();
+    builder.Services.AddTodoApplication();
 //    builder.Services.AddUserServices();
     builder.Services.AddTodoDatabase(builder.Configuration);
 

@@ -28,7 +28,7 @@ public class UserController : BaseController
         [FromQuery] GetListQuery getListQuery,
         CancellationToken cancellationToken)
     {
-        var getCountQuery = new GetCountQuery() { nameText = getListQuery.nameText };
+        var getCountQuery = new GetCountQuery() { Predicate = getListQuery.Predicate };
 
         var items = await ExecQueryAsync(getListQuery, cancellationToken);
         var count = await ExecQueryAsync(getCountQuery, cancellationToken);

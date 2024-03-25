@@ -10,13 +10,17 @@
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="FluentValidation" Version="11.9.0" />
     <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.9.0" />
-    <PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
+    <PackageReference Include="MediatR" Version="12.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Common.Api\Common.Api.csproj" />
-    <ProjectReference Include="..\Common.Repositiories\Common.Persistence.csproj" />
-    <ProjectReference Include="..\Todos.Domain\Todos.Domain.csproj" />
+    <ProjectReference Include="..\Common.Application\Common.Application.csproj" />
+    <ProjectReference Include="..\Common.Domain\Common.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Features\Todo\Queries\NewFolder\" />
   </ItemGroup>
 
 </Project>

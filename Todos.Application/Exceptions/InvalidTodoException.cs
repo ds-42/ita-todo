@@ -1,5 +1,6 @@
 ﻿using Common.Application.Exceptions;
-namespace Todos.Domain;
+
+namespace Todos.Application.Exceptions;
 
 public class InvalidTodoException : NotFoundException
 {

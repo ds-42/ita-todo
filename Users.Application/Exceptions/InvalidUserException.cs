@@ -1,13 +1,14 @@
 ﻿using Common.Application.Exceptions;
 
-namespace Common.Domain.Exceptions;
+namespace Users.Application.Exceptions;
 
 public class InvalidUserException : NotFoundException
 {
-    public InvalidUserException(int userId) : base(new 
-    { 
+    public InvalidUserException(int userId) : base(new
+    {
         Id = userId,
         Message = "Invalid user Id",
-    }) { }
+    })
+    { }
 }
 

@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Common.Domain;
-using Todos.Domain;
 
 namespace Common.Persistence;
 

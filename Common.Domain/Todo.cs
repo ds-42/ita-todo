@@ -1,6 +1,4 @@
-﻿using Common.Domain;
-
-namespace Todos.Domain;
+﻿namespace Common.Domain;
 
 public class Todo
 {
@@ -11,16 +9,4 @@ public class Todo
     public bool IsDone { get; set; }
     public DateTime CreateDate { get; set; }
     public DateTime UpdateDate { get; set; }
-
-    public static Todo Create(int id, string label) 
-    {
-        return new Todo 
-        { 
-            Id = id, 
-            Label = label,
-            IsDone = false,
-            CreateDate = DateTime.UtcNow,
-            UpdateDate = DateTime.UtcNow,
-        };
-    }
 }

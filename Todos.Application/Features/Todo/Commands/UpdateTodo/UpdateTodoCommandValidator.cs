@@ -1,11 +1,10 @@
 ﻿using FluentValidation;
-using Todos.Services.Dto;
 
-namespace Todos.Services.Validators;
+namespace Todos.Application.Features.Todo.Commands.CreateTodo;
 
-public class UpdateTodoDtoValidator : AbstractValidator<UpdateTodoDto>
+public class UpdateTodoCommandValidator : AbstractValidator<CreateTodoCommand>
 {
-    public UpdateTodoDtoValidator()
+    public UpdateTodoCommandValidator()
     {
         RuleFor(t => t.OwnerId).GreaterThan(0).WithMessage("Invalid owner Id");
         RuleFor(t => t.Label).MinimumLength(5).MaximumLength(100);

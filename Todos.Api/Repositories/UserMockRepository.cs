@@ -1,6 +1,5 @@
-﻿using Common.Domain;
-using Common.Repositories;
-using Todos.Domain;
+﻿using Common.Application.Abstractions.Persistence;
+using Common.Domain;
 
 namespace Todos.Api.Repositories;
 

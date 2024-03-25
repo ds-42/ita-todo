@@ -24,6 +24,8 @@ namespace Common.Persistence
             services.AddTransient<IRepository<ApplicationUser>, BaseRepository<ApplicationUser>>();
             services.AddTransient<IRepository<ApplicationUserRole>, BaseRepository<ApplicationUserRole>>();
             services.AddTransient<IRepository<RefreshToken>, BaseRepository<RefreshToken>>();
+            services.AddTransient<IRepository<Todo>, BaseRepository<Todo>>();
+
             return services;
         }
     }

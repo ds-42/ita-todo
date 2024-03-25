@@ -9,12 +9,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Users.Application.Features.User.Queries.GetList;
 
-public class GetByIdQueryHandler : IQueryHandler<GetListQuery, IReadOnlyCollection<GetUserDto>>
+public class GetListQueryHandler : IQueryHandler<GetListQuery, IReadOnlyCollection<GetUserDto>>
 {
     private readonly IRepository<ApplicationUser> _userRepository;
     private readonly IMapper _mapper;
 
-    public GetByIdQueryHandler(
+    public GetListQueryHandler(
         IRepository<ApplicationUser> userRepositiry,
         UsersMemoryCache cache,
         IMapper mapper) : base(cache.Cache, 1)
@@ -26,11 +26,11 @@ public class GetByIdQueryHandler : IQueryHandler<GetListQuery, IReadOnlyCollecti
     public override async Task<IReadOnlyCollection<GetUserDto>> ExecQuery(GetListQuery query, CancellationToken cancellationToken)
     {
         return _mapper.Map<IReadOnlyCollection<GetUserDto>>(await _userRepository.GetItemsAsync(
-            query.offset,
-            query.limit,
-            string.IsNullOrWhiteSpace(query.nameText)
+            query.Offset,
+            query.Limit,
+            string.IsNullOrWhiteSpace(query.Predicate)
                 ? null
-                : t => t.Login.Contains(query.nameText, StringComparison.InvariantCultureIgnoreCase),
+                : t => t.Login.Contains(query.Predicate),
             t => t.Id, null, cancellationToken));
 
     }

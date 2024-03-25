@@ -15,13 +15,13 @@ public class GetCountQueryHandler : IQueryHandler<GetCountQuery, int>
 
     public override async Task<int> ExecQuery(GetCountQuery query, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(query.nameText))
+        if (string.IsNullOrWhiteSpace(query.Predicate))
         {
             return await _users.CountAsync(cancellationToken: cancellationToken);
         }
         else
         {
-            return await _users.CountAsync(t => t.Login.Contains(query.nameText), cancellationToken: cancellationToken);
+            return await _users.CountAsync(t => t.Login.Contains(query.Predicate), cancellationToken: cancellationToken);
         }
     }
 }

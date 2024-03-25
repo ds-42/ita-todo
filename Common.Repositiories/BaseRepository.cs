@@ -30,7 +30,7 @@ public class BaseRepository<T> : IRepository<T> where T : class, new()
 
         if (orderBy != null)
         {
-            items = destinct == true
+            items = (destinct??false) == false
                 ? items.OrderBy(orderBy)
                 : items.OrderByDescending(orderBy);
         }
