@@ -1,7 +1,7 @@
 ﻿using Common.Application.Abstractions;
 using Common.Application.Exceptions;
 
-namespace Common.Api.Extensions;
+namespace Common.Application.Extensions;
 
 public static class CurrentUserExtension
 {

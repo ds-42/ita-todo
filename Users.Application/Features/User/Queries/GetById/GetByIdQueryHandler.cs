@@ -8,7 +8,7 @@ using MediatR;
 
 namespace Users.Application.Features.User.Queries.GetByIdQuery;
 
-public class GetByIdQueryHandler : ICacheQueryHandler<GetByIdQuery, GetUserDto>
+public class GetByIdQueryHandler : IQueryHandler<GetByIdQuery, GetUserDto>
 {
     private readonly IRepository<ApplicationUser> _userRepository;
     private readonly IMapper _mapper;

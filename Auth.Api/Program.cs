@@ -1,7 +1,6 @@
 using Common.Api;
 using Common.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -9,7 +8,10 @@ using Serilog.Events;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 using System.Text;
 using System.Text.Json.Serialization;
-using Users.Services;
+using Auth.Application;
+using Common.Application;
+using Users.Application;
+
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
     .WriteTo.File("Logs/information-.txt", LogEventLevel.Information, rollingInterval: RollingInterval.Day)
@@ -26,8 +28,10 @@ try
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
 
+    builder.Services.AddAuthApplication();
     builder.Services.AddCommonServices();
-    builder.Services.AddUserServices();
+    builder.Services.AddUserApplication();
+    builder.Services.AddCommonApplication();
     builder.Services.AddTodoDatabase(builder.Configuration);
 
     builder.Services.AddSwaggerGen(options =>

@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Users.Application.Features.User.Queries.GetList;
 
-public class GetByIdQueryHandler : ICacheQueryHandler<GetListQuery, IReadOnlyCollection<GetUserDto>>
+public class GetByIdQueryHandler : IQueryHandler<GetListQuery, IReadOnlyCollection<GetUserDto>>
 {
     private readonly IRepository<ApplicationUser> _userRepository;
     private readonly IMapper _mapper;

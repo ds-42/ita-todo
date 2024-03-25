@@ -1,4 +1,5 @@
-﻿using Common.Application.Abstractions.Persistence;
+﻿using Common.Application.Abstractions;
+using Common.Application.Abstractions.Persistence;
 using Common.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -18,9 +19,11 @@ namespace Common.Persistence
             );
 
             services.AddTransient<IContextTransactionCreator, ContextTransactionCreator>();
+            services.AddTransient<ICurrentUserService, CurrentUserService>();
 
             services.AddTransient<IRepository<ApplicationUser>, BaseRepository<ApplicationUser>>();
             services.AddTransient<IRepository<ApplicationUserRole>, BaseRepository<ApplicationUserRole>>();
+            services.AddTransient<IRepository<RefreshToken>, BaseRepository<RefreshToken>>();
             return services;
         }
     }

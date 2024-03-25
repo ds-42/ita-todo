@@ -3,7 +3,7 @@ using Common.Domain;
 
 namespace Users.Application.Features.User.Queries.GetCount;
 
-public class GetCountQueryHandler : ICacheQueryHandler<GetCountQuery, int>
+public class GetCountQueryHandler : IQueryHandler<GetCountQuery, int>
 {
     private readonly IRepository<ApplicationUser> _users;
 

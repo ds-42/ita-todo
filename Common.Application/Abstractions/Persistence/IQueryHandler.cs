@@ -4,13 +4,13 @@ using Microsoft.Extensions.Caching.Memory;
 
 namespace Common.Application.Abstractions.Persistence;
 
-public abstract class ICacheQueryHandler<TRequest, TResponse> : IRequestHandler<TRequest, TResponse>
+public abstract class IQueryHandler<TRequest, TResponse> : IRequestHandler<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
 {
     private readonly MemoryCache _cache;
     private readonly int _cacheSize;
 
-    public ICacheQueryHandler(MemoryCache cache, int cacheSize)
+    public IQueryHandler(MemoryCache cache, int cacheSize)
     {
         _cache = cache;
         _cacheSize = cacheSize;
