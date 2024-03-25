@@ -1,27 +1,28 @@
 ﻿using Auth.Application;
 using Auth.Application.Dto;
-using Microsoft.AspNetCore.Authorization;
+using Auth.Application.Features.Auth.Commands.GetJwtToken;
+using Auth.Application.Features.Auth.Commands.GetJwtTokenByRefreshToken;
+using Common.Application.Controllers;
+using Common.Domain;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
+using Users.Application.Features.User.Commands.CreateUser;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Auth.Api.Controllers;
 
 [ApiController]
 [Route("auth")]
-public class AuthController : ControllerBase
+public class AuthController : BaseController
 {
-    protected readonly IAuthService _authService;
-
-    public AuthController(IAuthService authService)
+    public AuthController(IMediator mediator) : base(mediator)
     {
-        _authService = authService;
     }
 
-
     [HttpPost("CreateJwtToken")]
-    public async Task<IActionResult> CreateJwtToken(AuthDto authDto, CancellationToken cancellationToken)
+    public async Task<IActionResult> CreateJwtToken(GetJwtTokenCommand command, CancellationToken cancellationToken)
     {
-        var token = await _authService.GetJwtTokenAsync(authDto, cancellationToken);
+        var token = await ExecCommandAsync(command, cancellationToken);
 
         return Ok(token);
     }
@@ -29,7 +30,9 @@ public class AuthController : ControllerBase
     [HttpPost("CreateJwtTokenByRefreshToken")]
     public async Task<IActionResult> CreateJwtTokenByRefreshToken(string refreshToken, CancellationToken cancellationToken)
     {
-        var token = await _authService.GetJwtTokenByRefreshTokenAsync(refreshToken, cancellationToken);
+        var command = new GetJwtTokenByRefreshTokenCommand() { RefreshToken = refreshToken };
+
+        var token = await ExecCommandAsync(command, cancellationToken);
 
         return Ok(token);
     }
