@@ -1,11 +1,6 @@
-﻿using Common.Application.Abstractions.Persistence;
-using FluentValidation;
-using MediatR;
+﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using Users.Application.Command.CreateUser;
-using Users.Application.Query.GetCount;
-using Users.Application.Query.GetList;
 using Users.Services.Mapping;
 
 namespace Users.Application;

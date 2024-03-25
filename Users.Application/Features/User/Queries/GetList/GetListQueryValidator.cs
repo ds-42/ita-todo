@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Users.Application.Query.GetList;
+namespace Users.Application.Features.User.Queries.GetList;
 
 public class GetListQueryValidator : AbstractValidator<GetListQuery>
 {

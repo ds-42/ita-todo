@@ -7,7 +7,7 @@ using Microsoft.Extensions.Caching.Memory;
 using Users.Services.Dto;
 using Users.Services.Utils;
 
-namespace Users.Application.Command.CreateUser;
+namespace Users.Application.Features.User.Commands.CreateUser;
 
 public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, GetUserDto>
 {
@@ -49,6 +49,4 @@ public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, GetUs
         _cache.Clear();
         return _mapper.Map<GetUserDto>(await _userRepository.AddAsync(user, cancellationToken));
     }
-
-
 }

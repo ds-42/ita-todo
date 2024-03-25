@@ -17,6 +17,8 @@ namespace Common.Persistence
                 }
             );
 
+            services.AddTransient<IContextTransactionCreator, ContextTransactionCreator>();
+
             services.AddTransient<IRepository<ApplicationUser>, BaseRepository<ApplicationUser>>();
             services.AddTransient<IRepository<ApplicationUserRole>, BaseRepository<ApplicationUserRole>>();
             return services;
