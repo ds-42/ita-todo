@@ -22,6 +22,11 @@ public class GetListQueryHandler : IQueryHandler<GetListQuery, IReadOnlyCollecti
         _mapper = mapper;
     }
 
+    protected override string GetCacheKey(GetListQuery query)
+    {
+        return $"uid:{_currentUser.UserId}:{base.GetCacheKey(query)}";
+    }
+
     public override async Task<IReadOnlyCollection<GetTodoDto>> ExecQuery(GetListQuery query, CancellationToken cancellationToken)
     {
         var ownerId = query.OwnerId;

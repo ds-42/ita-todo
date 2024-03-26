@@ -17,6 +17,11 @@ public class GetCountQueryHandler : IQueryHandler<GetCountQuery, int>
         _todos = todos;
     }
 
+    protected override string GetCacheKey(GetCountQuery query)
+    {
+        return $"uid:{_currentUser.UserId}:{base.GetCacheKey(query)}";
+    }
+
     public override async Task<int> ExecQuery(GetCountQuery query, CancellationToken cancellationToken)
     {
         var ownerId = query.OwnerId;
