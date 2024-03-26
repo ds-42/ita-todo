@@ -5,6 +5,7 @@ using Common.Application.Extensions;
 using Common.Domain;
 using MediatR;
 using Microsoft.Extensions.Caching.Memory;
+using Serilog;
 using Todos.Application.Dto;
 using Todos.Application.Features.Todo.Commands.UpdateTodo;
 
@@ -49,7 +50,7 @@ public class UpdateTodoCommandHandler : IRequestHandler<UpdateTodoCommand, GetTo
 
         item = await _todos.UpdateAsync(item, cancellationToken);
 
-//        Log.Information($"Запись изменена: {JsonSerializer.JsonSerialize(item)}");
+         Log.Information($"Запись изменена: {item.JsonSerialize()}");
 
         _cache.Clear();
         return _mapper.Map<GetTodoDto>(item);

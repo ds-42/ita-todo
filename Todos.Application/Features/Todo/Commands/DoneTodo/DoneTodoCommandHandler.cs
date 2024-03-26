@@ -4,6 +4,7 @@ using Common.Application.Abstractions.Persistence;
 using Common.Application.Extensions;
 using MediatR;
 using Microsoft.Extensions.Caching.Memory;
+using Serilog;
 using Todos.Application.Dto;
 
 namespace Todos.Application.Features.Todo.Commands.DoneTodo;
@@ -36,7 +37,7 @@ public class DoneTodoCommandHandler : IRequestHandler<DoneTodoCommand, GetTodoDt
         item.IsDone = true;
         await _todos.UpdateAsync(item, cancellationToken);
 
-//        Log.Information($"Признак выполнения изменен: {JsonSerializer.JsonSerialize(item)}");
+        Log.Information($"Признак выполнения изменен: {item.JsonSerialize()}");
 
         _cache.Clear();
         return _mapper.Map<GetTodoDto>(item);

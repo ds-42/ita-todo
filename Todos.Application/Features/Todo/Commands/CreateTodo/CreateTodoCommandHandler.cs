@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using Common.Application.Abstractions;
 using Common.Application.Abstractions.Persistence;
-using Common.Application.Exceptions;
+using Common.Application.Extensions;
 using Common.Domain;
 using MediatR;
 using Microsoft.Extensions.Caching.Memory;
+using Serilog;
 using Todos.Application.Dto;
-using Users.Services.Utils;
 
 namespace Todos.Application.Features.Todo.Commands.CreateTodo;
 
@@ -47,7 +47,7 @@ public class CreateTodoCommandHandler : IRequestHandler<CreateTodoCommand, GetTo
 
         result = await _todos.AddAsync(result, cancellationToken);
 
-//        Log.Information($"Добавлена новая запись: {item.JsonSerialize()}");
+        Log.Information($"Добавлена новая запись: {result.JsonSerialize()}");
 
         _cache.Clear();
         return _mapper.Map<GetTodoDto>(result);

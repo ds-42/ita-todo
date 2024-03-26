@@ -1,9 +1,9 @@
-﻿using AutoMapper;
-using Common.Application.Abstractions;
+﻿using Common.Application.Abstractions;
 using Common.Application.Abstractions.Persistence;
 using Common.Application.Extensions;
 using MediatR;
 using Microsoft.Extensions.Caching.Memory;
+using Serilog;
 
 namespace Todos.Application.Features.Todo.Commands.DeleteTodo;
 
@@ -31,7 +31,7 @@ public class DeleteTodoCommandHandler : IRequestHandler<DeleteTodoCommand, bool>
 
         bool result = await _todos.DeleteAsync(item, cancellationToken);
 
-//        Log.Information($"Запись удалена: {JsonSerializer.JsonSerialize(item)}");
+        Log.Information($"Запись удалена: {item.JsonSerialize()}");
 
         _cache.Clear();
         return result;
