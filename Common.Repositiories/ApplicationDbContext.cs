@@ -20,6 +20,7 @@ public class ApplicationDbContext : DbContext
         modelBuilder.Entity<Todo>().HasKey(t => t.Id);
         modelBuilder.Entity<Todo>().Property(t => t.Label).HasMaxLength(100).IsRequired();
 
+        modelBuilder.Entity<Todo>().Navigation(t => t.Owner).AutoInclude();
         modelBuilder.Entity<Todo>().HasOne(t => t.Owner)
             //            .WithMany(t => t.Todos)
             .WithMany()
