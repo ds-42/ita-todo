@@ -1,4 +1,5 @@
 using Common.Api;
+using Common.Application;
 using Common.Persistence;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -30,6 +31,7 @@ try
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
 
+    builder.Services.AddCommonApplication();
     builder.Services.AddCommonServices();
     builder.Services.AddTodoApplication();
 //    builder.Services.AddUserServices();
@@ -68,8 +70,6 @@ try
             },
         });
     });
-
-    builder.Services.AddFluentValidationAutoValidation();
 
     builder.Services.AddAuthorization();
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

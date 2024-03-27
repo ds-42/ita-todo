@@ -1,9 +1,12 @@
-﻿namespace Todos.Application.Features.Todo.Commands.DoneTodo;
+﻿using FluentValidation;
+using Todos.Application.Extensions;
 
-public class DoneTodoCommandValidator : TodoValidator<DoneTodoCommand>
+namespace Todos.Application.Features.Todo.Commands.DoneTodo;
+
+public class DoneTodoCommandValidator : AbstractValidator<DoneTodoCommand>
 {
     public DoneTodoCommandValidator()
     {
-        RuleForId(t => t.Id);
+        RuleFor(t => t.Id).AsTodoId();
     }
 }

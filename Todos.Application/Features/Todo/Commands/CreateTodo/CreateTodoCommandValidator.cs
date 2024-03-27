@@ -1,10 +1,13 @@
-﻿namespace Todos.Application.Features.Todo.Commands.CreateTodo;
+﻿using FluentValidation;
+using Todos.Application.Extensions;
 
-public class CreateTodoCommandValidator : TodoValidator<CreateTodoCommand>
+namespace Todos.Application.Features.Todo.Commands.CreateTodo;
+
+public class CreateTodoCommandValidator : AbstractValidator<CreateTodoCommand>
 {
     public CreateTodoCommandValidator()
     {
-        RuleForOwnerId(t => t.OwnerId);
-        RuleForLabel(t => t.Label);
+        RuleFor(t => t.OwnerId).AsTodoOwnerId();
+        RuleFor(t => t.Label).AsTodoLabel();
     }
 }

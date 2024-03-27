@@ -1,11 +1,14 @@
-﻿namespace Todos.Application.Features.Todo.Commands.UpdateTodo;
+﻿using FluentValidation;
+using Todos.Application.Extensions;
 
-public class UpdateTodoCommandValidator : TodoValidator<UpdateTodoCommand>
+namespace Todos.Application.Features.Todo.Commands.UpdateTodo;
+
+public class UpdateTodoCommandValidator : AbstractValidator<UpdateTodoCommand>
 {
     public UpdateTodoCommandValidator()
     {
-        RuleForId(t => t.Id);
-        RuleForOwnerId(t => t.OwnerId);
-        RuleForLabel(t => t.Label);
+        RuleFor(t => t.Id).AsTodoId();
+        RuleFor(t => t.OwnerId).AsTodoOwnerId();
+        RuleFor(t => t.Label).AsTodoLabel();
     }
 }
