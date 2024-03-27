@@ -1,9 +1,14 @@
-﻿namespace Todos.Application.Features.Todo.Commands.DeleteTodo;
+﻿using FluentValidation;
 
-public class DeleteTodoCommandValidator : TodoValidator<DeleteTodoCommand>
+namespace Todos.Application.Features.Todo.Commands.DeleteTodo;
+
+public class DeleteTodoCommandValidator : AbstractValidator<DeleteTodoCommand>
 {
     public DeleteTodoCommandValidator()
     {
-        RuleForId(t => t.Id);
+        RuleFor(t => t.Id)
+            .NotNull()
+            .GreaterThan(0)
+            .WithMessage("Invalid todo Id");
     }
 }

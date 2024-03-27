@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace Todos.Application.Features.Todo;
 
-public class TodoValidator<T> : AbstractValidator<T>
+public abstract class TodoValidator<T> : AbstractValidator<T>
 {
     public IRuleBuilderOptions<T, int> RuleForId(Expression<Func<T, int>> predicate) => RuleFor(predicate)
         .NotNull()
