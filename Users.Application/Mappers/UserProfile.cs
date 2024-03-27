@@ -2,11 +2,11 @@
 using Common.Domain;
 using Users.Services.Dto;
 
-namespace Users.Services.Mapping;
+namespace Users.Application.Mappers;
 
-public class AutoMapperProfile : Profile
+public class UserProfile : Profile
 {
-    public AutoMapperProfile() 
+    public UserProfile()
     {
         CreateMap<ApplicationUser, GetUserDto>();
     }

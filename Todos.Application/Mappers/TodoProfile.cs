@@ -2,14 +2,13 @@
 using Common.Domain;
 using Todos.Application.Dto;
 using Todos.Application.Features.Todo.Commands.CreateTodo;
-using Todos.Application.Features.Todo.Commands.DoneTodo;
 using Todos.Application.Features.Todo.Commands.UpdateTodo;
 
-namespace Todos.Application.Mapping;
+namespace Todos.Application.Mappers;
 
-public class AutoMapperProfile : Profile
+public class TodoProfile : Profile
 {
-    public AutoMapperProfile()
+    public TodoProfile()
     {
         CreateMap<Todo, GetTodoDto>();
         CreateMap<CreateTodoCommand, Todo>();

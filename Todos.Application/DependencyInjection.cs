@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 using System.Reflection;
-using Todos.Application.Mapping;
 
 namespace Todos.Application;
 
@@ -9,7 +8,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddTodoApplication(this IServiceCollection services)
     {
-        services.AddAutoMapper(typeof(AutoMapperProfile));
+        services.AddAutoMapper(Assembly.GetExecutingAssembly());
         services.AddSingleton<TodosMemoryCache>();
 
         services.AddValidatorsFromAssemblies(
