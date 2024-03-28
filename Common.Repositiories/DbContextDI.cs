@@ -1,6 +1,8 @@
 ﻿using Common.Application.Abstractions;
 using Common.Application.Abstractions.Persistence;
 using Common.Domain;
+using Common.Domain.Auth;
+using Common.Domain.Users;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
