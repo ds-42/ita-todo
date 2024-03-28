@@ -1,5 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Common.Domain;
+using Common.Domain.Auth;
+using Common.Domain.Users;
+using System.Reflection;
 
 namespace Common.Persistence;
 
@@ -17,6 +20,7 @@ public class ApplicationDbContext : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
 
         base.OnModelCreating(modelBuilder);
     }

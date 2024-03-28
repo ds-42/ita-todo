@@ -1,8 +1,8 @@
-﻿using Common.Domain;
+﻿using Common.Domain.Auth;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace Common.Persistence.Configuration;
+namespace Common.Persistence.Configuration.Auth;
 
 public class RefreshTokenConfiguration : IEntityTypeConfiguration<RefreshToken>
 {
