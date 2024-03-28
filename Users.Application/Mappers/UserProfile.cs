@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Common.Domain;
+using Common.Domain.Users;
 using Users.Services.Dto;
 
 namespace Users.Application.Mappers;

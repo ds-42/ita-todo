@@ -1,4 +1,4 @@
-﻿namespace Common.Domain;
+﻿namespace Common.Domain.Users;
 
 public class ApplicationUser
 {

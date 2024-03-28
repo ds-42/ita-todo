@@ -1,7 +1,7 @@
 ﻿using Common.Application.Abstractions;
 using Common.Application.Abstractions.Persistence;
 using Common.Application.Extensions;
-using Common.Domain;
+using Common.Domain.Users;
 using MediatR;
 using Microsoft.Extensions.Caching.Memory;
 

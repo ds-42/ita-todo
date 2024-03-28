@@ -1,4 +1,6 @@
-﻿namespace Common.Domain;
+﻿using Common.Domain.Users;
+
+namespace Common.Domain;
 
 public class Todo
 {

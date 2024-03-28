@@ -2,7 +2,8 @@
 using Auth.Application.Features.Auth.Commands.GetJwtTokenByRefreshToken;
 using Common.Application.Abstractions.Persistence;
 using Common.Application.Exceptions;
-using Common.Domain;
+using Common.Domain.Auth;
+using Common.Domain.Users;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;

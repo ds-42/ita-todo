@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
-using Common.Domain;
 using Microsoft.Extensions.Caching.Memory;
 using Users.Services.Dto;
 using Common.Application.Abstractions.Persistence;
 using Common.Application.Extensions;
 using MediatR;
+using Common.Domain.Users;
 
 namespace Users.Application.Features.User.Queries.GetByIdQuery;
 

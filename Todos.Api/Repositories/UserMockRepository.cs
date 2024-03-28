@@ -1,5 +1,5 @@
 ﻿using Common.Application.Abstractions.Persistence;
-using Common.Domain;
+using Common.Domain.Users;
 
 namespace Todos.Api.Repositories;
 
