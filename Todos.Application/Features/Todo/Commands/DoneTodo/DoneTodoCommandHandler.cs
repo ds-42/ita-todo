@@ -6,18 +6,19 @@ using MediatR;
 using Microsoft.Extensions.Caching.Memory;
 using Serilog;
 using Todos.Application.Dto;
+using TodoModel = Common.Domain.Todo;
 
 namespace Todos.Application.Features.Todo.Commands.DoneTodo;
 
 public class DoneTodoCommandHandler : IRequestHandler<DoneTodoCommand, GetTodoDto>
 {
-    private readonly IRepository<Common.Domain.Todo> _todos;
+    private readonly IRepository<TodoModel> _todos;
     private readonly ICurrentUserService _currentUser;
     private readonly MemoryCache _cache;
     private readonly IMapper _mapper;
 
     public DoneTodoCommandHandler(
-        IRepository<Common.Domain.Todo> todos,
+        IRepository<TodoModel> todos,
         ICurrentUserService currentUser,
         TodosMemoryCache cache,
         IMapper mapper)

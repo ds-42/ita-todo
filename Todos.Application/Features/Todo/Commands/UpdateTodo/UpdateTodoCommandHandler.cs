@@ -8,19 +8,20 @@ using Microsoft.Extensions.Caching.Memory;
 using Serilog;
 using Todos.Application.Dto;
 using Todos.Application.Features.Todo.Commands.UpdateTodo;
+using TodoModel = Common.Domain.Todo;
 
 namespace Todos.Application.Features.Todo.Commands.CreateTodo;
 
 public class UpdateTodoCommandHandler : IRequestHandler<UpdateTodoCommand, GetTodoDto>
 {
-    private readonly IRepository<Common.Domain.Todo> _todos;
+    private readonly IRepository<TodoModel> _todos;
     private readonly IRepository<ApplicationUser> _users;
     private readonly ICurrentUserService _currentUser;
     private readonly MemoryCache _cache;
     private readonly IMapper _mapper;
 
     public UpdateTodoCommandHandler(
-        IRepository<Common.Domain.Todo> todos,
+        IRepository<TodoModel> todos,
         IRepository<ApplicationUser> users,
         ICurrentUserService currentUser,
         TodosMemoryCache cache,

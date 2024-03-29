@@ -4,17 +4,18 @@ using Common.Application.Extensions;
 using MediatR;
 using Microsoft.Extensions.Caching.Memory;
 using Serilog;
+using TodoModel = Common.Domain.Todo;
 
 namespace Todos.Application.Features.Todo.Commands.DeleteTodo;
 
 public class DeleteTodoCommandHandler : IRequestHandler<DeleteTodoCommand, bool>
 {
-    private readonly IRepository<Common.Domain.Todo> _todos;
+    private readonly IRepository<TodoModel> _todos;
     private readonly ICurrentUserService _currentUser;
     private readonly MemoryCache _cache;
 
     public DeleteTodoCommandHandler(
-        IRepository<Common.Domain.Todo> todos,
+        IRepository<TodoModel> todos,
         ICurrentUserService currentUser,
         TodosMemoryCache cache)
     {

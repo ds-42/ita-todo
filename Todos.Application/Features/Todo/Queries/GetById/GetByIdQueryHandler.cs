@@ -3,17 +3,18 @@ using Common.Application.Abstractions;
 using Common.Application.Abstractions.Persistence;
 using Common.Application.Extensions;
 using Todos.Application.Dto;
+using TodoModel = Common.Domain.Todo;
 
 namespace Todos.Application.Features.Todo.Queries.GetById;
 
 public class GetByIdQueryHandler : IQueryHandler<GetByIdQuery, GetTodoDto>
 {
-    private readonly IRepository<Common.Domain.Todo> _todos;
+    private readonly IRepository<TodoModel> _todos;
     private readonly ICurrentUserService _currentUser;
     private readonly IMapper _mapper;
 
     public GetByIdQueryHandler(
-        IRepository<Common.Domain.Todo> todos,
+        IRepository<TodoModel> todos,
         TodosMemoryCache cache,
         ICurrentUserService currentUser,
         IMapper mapper) : base(cache.Cache, 3)
