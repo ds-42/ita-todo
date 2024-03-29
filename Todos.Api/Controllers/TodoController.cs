@@ -9,7 +9,6 @@ using Todos.Application.Features.Todo.Commands.DeleteTodo;
 using Todos.Application.Features.Todo.Commands.DoneTodo;
 using Todos.Application.Features.Todo.Commands.UpdateTodo;
 using Todos.Application.Features.Todo.Queries.GetById;
-using Todos.Application.Features.Todo.Queries.GetCount;
 using Todos.Application.Features.Todo.Queries.GetList;
 
 namespace Todos.Api.Controllers;
@@ -30,14 +29,11 @@ public class TodoController : BaseController
     public async Task<IActionResult> Get(
         [FromQuery] GetListQuery getListQuery, CancellationToken cancellationToken = default)
     {
-        var getCountQuery = new GetCountQuery() { OwnerId = getListQuery.OwnerId, Predicate = getListQuery.Predicate };
-
-        var items = await ExecQueryAsync(getListQuery, cancellationToken);
-        int count = await ExecQueryAsync(getCountQuery, cancellationToken);
+        var todos = await ExecQueryAsync(getListQuery, cancellationToken);
         HttpContext.Response.Headers
-            .Append("X-Total-Count", count.ToString());
+            .Append("X-Total-Count", todos.Count.ToString());
 
-        return Ok(items);
+        return Ok(todos.Items);
     }
 
 

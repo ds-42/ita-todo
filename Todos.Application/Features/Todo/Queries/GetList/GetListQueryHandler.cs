@@ -2,17 +2,21 @@
 using Common.Application.Abstractions.Persistence;
 using Todos.Application.Dto;
 using Common.Application.Abstractions;
+using System.Linq.Expressions;
+
+using TodoModel = Common.Domain.Todo;
+using Common.Application.Dto;
 
 namespace Todos.Application.Features.Todo.Queries.GetList;
 
-public class GetListQueryHandler : IQueryHandler<GetListQuery, IReadOnlyCollection<GetTodoDto>>
+public class GetListQueryHandler : IQueryHandler<GetListQuery, CountableList<GetTodoDto>>
 {
-    private readonly IRepository<Common.Domain.Todo> _todos;
+    private readonly IRepository<TodoModel> _todos;
     private readonly ICurrentUserService _currentUser;
     private readonly IMapper _mapper;
 
     public GetListQueryHandler(
-        IRepository<Common.Domain.Todo> todos,
+        IRepository<TodoModel> todos,
         TodosMemoryCache cache,
         ICurrentUserService currentUser,
         IMapper mapper) : base(cache.Cache, 1)
@@ -27,20 +31,29 @@ public class GetListQueryHandler : IQueryHandler<GetListQuery, IReadOnlyCollecti
         return $"uid:{_currentUser.UserId}:{base.GetCacheKey(query)}";
     }
 
-    public override async Task<IReadOnlyCollection<GetTodoDto>> ExecQuery(GetListQuery query, CancellationToken cancellationToken)
+    public override async Task<CountableList<GetTodoDto>> ExecQuery(GetListQuery query, CancellationToken cancellationToken)
     {
         var ownerId = query.OwnerId;
         if (!_currentUser.IsAdmin)
             ownerId = _currentUser.UserId;
 
-        return _mapper.Map<IReadOnlyCollection<GetTodoDto>>(await _todos.GetItemsAsync(
+        Expression<Func<TodoModel, bool>> where = t => 
+            (_currentUser.IsAdmin || t.OwnerId == _currentUser.UserId) &&
+            (string.IsNullOrWhiteSpace(query.Predicate) ? true : t.Label.Contains(query.Predicate)) &&
+            (ownerId == null ? true : t.OwnerId == ownerId);
+
+        var items = _mapper.Map<IReadOnlyCollection<GetTodoDto>> (await _todos.GetItemsAsync(
             offset: query.Offset,
             limit: query.Limit,
-            predicate: (query.Predicate == null && ownerId == null)? null : t => 
-                (string.IsNullOrWhiteSpace(query.Predicate) ? true : t.Label.Contains(query.Predicate)) && 
-                (ownerId == null ? true : t.OwnerId == ownerId),
+            predicate: where,
             orderBy: t => t.Id, 
             destinct: null, 
             cancellationToken));
+
+        return new CountableList<GetTodoDto>()
+        {
+            Count = await _todos.CountAsync(where, cancellationToken),
+            Items = items,
+        };
     }
 }

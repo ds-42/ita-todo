@@ -4,7 +4,6 @@ using MediatR;
 using Common.Application.Controllers;
 using Users.Application.Features.User.Queries.GetList;
 using Users.Application.Features.User.Commands.CreateUser;
-using Users.Application.Features.User.Queries.GetCount;
 using Users.Application.Features.User.Queries.GetByIdQuery;
 using Users.Application.Dto;
 using Users.Application.Features.User.Commands.UpdateUser;
@@ -17,7 +16,6 @@ namespace Users.Api.Controllers;
 [Route("users")]
 public class UserController : BaseController
 {
-
     public UserController(IMediator mediator) : base(mediator) 
     {
     }
@@ -28,13 +26,10 @@ public class UserController : BaseController
         [FromQuery] GetListQuery getListQuery,
         CancellationToken cancellationToken)
     {
-        var getCountQuery = new GetCountQuery() { Predicate = getListQuery.Predicate };
+        var users = await ExecQueryAsync(getListQuery, cancellationToken);
 
-        var items = await ExecQueryAsync(getListQuery, cancellationToken);
-        var count = await ExecQueryAsync(getCountQuery, cancellationToken);
-
-        HttpContext.Response.Headers.Append("X-Total-Count", count.ToString());
-        return Ok(items);
+        HttpContext.Response.Headers.Append("X-Total-Count", users.Count.ToString());
+        return Ok(users.Items);
     }
 
     [AllowAnonymous]
